@@ -124,15 +124,7 @@ export class DomRenderer {
     this.root.remove();
   }
 
-  setHostAppearance(appearance: { textColor?: string; mutedTextColor?: string; fontFamily?: string }): void {
-    if (appearance.textColor) {
-      this.root.style.setProperty("--gs-host-text", appearance.textColor);
-    }
-
-    if (appearance.mutedTextColor) {
-      this.root.style.setProperty("--gs-host-muted", appearance.mutedTextColor);
-    }
-
+  setHostAppearance(appearance: { fontFamily?: string }): void {
     if (appearance.fontFamily) {
       this.root.style.setProperty("--gs-font-family", appearance.fontFamily);
     }

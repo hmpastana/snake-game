@@ -29,8 +29,6 @@ export declare class DomRenderer {
     setTheme(colors: GithubSnakeColors, themeName: GithubSnakeThemeName): void;
     destroy(): void;
     setHostAppearance(appearance: {
-        textColor?: string;
-        mutedTextColor?: string;
         fontFamily?: string;
     }): void;
     private createCells;

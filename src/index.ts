@@ -210,19 +210,13 @@ function applyTheme(renderer: DomRenderer, theme: GithubSnakeThemeName): void {
 }
 
 function resolveHostAppearance(target: HTMLElement): {
-  textColor?: string;
-  mutedTextColor?: string;
   fontFamily?: string;
 } {
   const computed = getComputedStyle(target);
-  const rawTextColor = computed.color || getComputedStyle(document.body).color;
   const rawFontFamily = computed.fontFamily || getComputedStyle(document.body).fontFamily;
-  const textColor = shouldUseHostTextColor(rawTextColor) ? rawTextColor : undefined;
   const fontFamily = shouldUseHostFont(rawFontFamily) ? rawFontFamily : undefined;
 
   return {
-    textColor,
-    mutedTextColor: textColor ? createMutedColor(textColor) : undefined,
     fontFamily,
   };
 }
@@ -243,55 +237,6 @@ function shouldUseHostFont(fontFamily: string): boolean {
   }
 
   return true;
-}
-
-function shouldUseHostTextColor(color: string): boolean {
-  const normalized = color.trim().toLowerCase();
-
-  if (!normalized) {
-    return false;
-  }
-
-  if (isLocalEnvironment() && isDefaultDarkTextColor(normalized)) {
-    return false;
-  }
-
-  return true;
-}
-
-function isLocalEnvironment(): boolean {
-  if (typeof window === "undefined") {
-    return false;
-  }
-
-  return ["localhost", "127.0.0.1", "0.0.0.0"].includes(window.location.hostname);
-}
-
-function isDefaultDarkTextColor(color: string): boolean {
-  return color === "rgb(0, 0, 0)"
-    || color === "rgba(0, 0, 0, 1)"
-    || color === "#000"
-    || color === "#000000"
-    || color === "black"
-    || color === "canvastext";
-}
-
-function createMutedColor(color: string): string {
-  const rgbMatch = color.match(/^rgba?\(([^)]+)\)$/i);
-  if (!rgbMatch) {
-    return color;
-  }
-
-  const parts = rgbMatch[1]
-    .split(",")
-    .map((part) => part.trim())
-    .slice(0, 3);
-
-  if (parts.length !== 3) {
-    return color;
-  }
-
-  return `rgba(${parts.join(", ")}, 0.72)`;
 }
 
 function dispatchThemeChange(target: HTMLElement, theme: GithubSnakeThemeName): void {
