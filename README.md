@@ -95,7 +95,7 @@ Creates and mounts the game inside the provided target container.
 | `target` | `string \| HTMLElement` | required | Mount point for the game |
 | `rows` | `number` | `7` | Playable board rows |
 | `cols` | `number` | `53` | Playable board columns |
-| `cellSize` | `number` | `16` | Size of each contribution cell |
+| `cellSize` | `number` | `14` | Size of each contribution cell |
 | `gapSize` | `number` | `3` | Gap between cells |
 | `theme` | `"github-dark" \| "github-light"` | `"github-dark"` | Base visual theme |
 | `customColors` | `Partial<GithubSnakeColors>` | `undefined` | Override theme colors |
@@ -108,6 +108,7 @@ Creates and mounts the game inside the provided target container.
 | `months` | `string[]` | GitHub-like defaults | Replace month labels |
 | `weekdays` | `string[]` | `["Mon", "Wed", "Fri"]` | Replace weekday labels |
 | `storageKey` | `string` | `"github-snake-best-score"` | Local storage key |
+| `difficulty` | `Partial<GithubSnakeDifficultyConfig>` | staged defaults | Configure thresholds, step speed, max speed, and streak bonuses |
 | `onScoreChange` | callback | `undefined` | Score update hook |
 | `onGameOver` | callback | `undefined` | Game over hook |
 
