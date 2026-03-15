@@ -1,10 +1,12 @@
 import type { GameSnapshot, GameStatus } from "../core/game";
 import type { GithubSnakeColors, GithubSnakeThemeName, ResolvedGithubSnakeConfig } from "../core/config";
+import type { Direction } from "../core/snake";
 
 interface RendererControls {
   onStart: () => void;
   onPause: () => void;
   onRestart: () => void;
+  onDirection: (direction: Direction) => void;
   onThemeChange: (theme: GithubSnakeThemeName) => void;
 }
 
@@ -14,6 +16,7 @@ export class DomRenderer {
   private readonly scoreValue: HTMLElement;
   private readonly bestScoreValue: HTMLElement;
   private readonly totalCommitsValue: HTMLElement;
+  private readonly boardShell: HTMLDivElement;
   private readonly boardElement: HTMLDivElement;
   private readonly overlay: HTMLDivElement;
   private readonly overlayTitle: HTMLElement;
@@ -23,6 +26,10 @@ export class DomRenderer {
   private readonly restartButton: HTMLButtonElement;
   private readonly lightThemeButton: HTMLButtonElement;
   private readonly darkThemeButton: HTMLButtonElement;
+  private readonly touchUpButton: HTMLButtonElement;
+  private readonly touchLeftButton: HTMLButtonElement;
+  private readonly touchDownButton: HTMLButtonElement;
+  private readonly touchRightButton: HTMLButtonElement;
   private readonly cells = new Map<string, HTMLDivElement>();
   private currentTheme: GithubSnakeThemeName;
 
@@ -39,6 +46,7 @@ export class DomRenderer {
     this.scoreValue = this.requireElement("[data-gs-score]");
     this.bestScoreValue = this.requireElement("[data-gs-best-score]");
     this.totalCommitsValue = this.requireElement("[data-gs-total-commits]");
+    this.boardShell = this.requireElement("[data-gs-board-shell]");
     this.boardElement = this.requireElement("[data-gs-board]");
     this.overlay = this.requireElement("[data-gs-overlay]");
     this.overlayTitle = this.requireElement("[data-gs-overlay-title]");
@@ -48,6 +56,10 @@ export class DomRenderer {
     this.restartButton = this.requireElement("[data-gs-restart]");
     this.lightThemeButton = this.requireElement("[data-gs-theme-light]");
     this.darkThemeButton = this.requireElement("[data-gs-theme-dark]");
+    this.touchUpButton = this.requireElement("[data-gs-touch-up]");
+    this.touchLeftButton = this.requireElement("[data-gs-touch-left]");
+    this.touchDownButton = this.requireElement("[data-gs-touch-down]");
+    this.touchRightButton = this.requireElement("[data-gs-touch-right]");
 
     this.boardElement.style.setProperty("--gs-cols", String(config.cols));
     this.boardElement.style.setProperty("--gs-cell-size", `${config.cellSize}px`);
@@ -70,6 +82,46 @@ export class DomRenderer {
     this.restartButton.addEventListener("click", controls.onRestart);
     this.lightThemeButton.addEventListener("click", () => controls.onThemeChange("github-light"));
     this.darkThemeButton.addEventListener("click", () => controls.onThemeChange("github-dark"));
+    this.touchUpButton.addEventListener("click", () => controls.onDirection({ x: 0, y: -1 }));
+    this.touchLeftButton.addEventListener("click", () => controls.onDirection({ x: -1, y: 0 }));
+    this.touchDownButton.addEventListener("click", () => controls.onDirection({ x: 0, y: 1 }));
+    this.touchRightButton.addEventListener("click", () => controls.onDirection({ x: 1, y: 0 }));
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    this.boardShell.addEventListener("touchstart", (event) => {
+      const touch = event.changedTouches[0];
+      if (!touch) {
+        return;
+      }
+
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    }, { passive: true });
+
+    this.boardShell.addEventListener("touchend", (event) => {
+      const touch = event.changedTouches[0];
+      if (!touch) {
+        return;
+      }
+
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+
+      if (Math.max(absX, absY) < 18) {
+        return;
+      }
+
+      if (absX > absY) {
+        controls.onDirection(deltaX > 0 ? { x: 1, y: 0 } : { x: -1, y: 0 });
+        return;
+      }
+
+      controls.onDirection(deltaY > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 });
+    }, { passive: true });
   }
 
   render(snapshot: GameSnapshot): void {
@@ -225,7 +277,7 @@ export class DomRenderer {
             <div class="gs-corner" aria-hidden="true"></div>
             <div class="gs-months" aria-hidden="${String(!this.config.showMonthLabels)}">${monthLabels}</div>
             <div class="gs-weekdays" aria-hidden="${String(!this.config.showWeekdayLabels)}">${weekdayLabels}</div>
-            <div class="gs-board-shell">
+            <div class="gs-board-shell" data-gs-board-shell>
               <div class="gs-board-frame">
                 <div class="gs-board" data-gs-board></div>
                 <div class="gs-overlay" data-gs-overlay>
@@ -258,6 +310,15 @@ export class DomRenderer {
               </div>
             </div>
           </footer>
+
+          <div class="gs-touch-controls" aria-label="Touch controls">
+            <button class="gs-touch-button gs-touch-up" type="button" data-gs-touch-up aria-label="Move up">↑</button>
+            <div class="gs-touch-row">
+              <button class="gs-touch-button" type="button" data-gs-touch-left aria-label="Move left">←</button>
+              <button class="gs-touch-button" type="button" data-gs-touch-down aria-label="Move down">↓</button>
+              <button class="gs-touch-button" type="button" data-gs-touch-right aria-label="Move right">→</button>
+            </div>
+          </div>
         </div>
       </section>
     `;

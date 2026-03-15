@@ -202,6 +202,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .gs-board-frame {
@@ -384,6 +385,44 @@
   white-space: nowrap;
 }
 
+.gs-touch-controls {
+  display: none;
+  margin-top: 14px;
+  justify-items: center;
+  gap: 8px;
+}
+
+.gs-touch-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 64px));
+  gap: 8px;
+}
+
+.gs-touch-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 52px;
+  border: 1px solid var(--gs-border);
+  border-radius: 14px;
+  background: var(--gs-button-bg);
+  color: var(--gs-host-text);
+  font: inherit;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 140ms ease, transform 140ms ease;
+}
+
+.gs-touch-button:active {
+  transform: scale(0.97);
+  background: var(--gs-button-hover);
+}
+
+.gs-touch-up {
+  width: 72px;
+}
+
 @media (max-width: 920px) {
   .gs-header {
     grid-template-columns: 1fr;
@@ -395,26 +434,167 @@
 }
 
 @media (max-width: 720px) {
+  .gs-container {
+    --gs-cell-size: 18px;
+    --gs-gap-size: 4px;
+  }
+
+  .gs-shell {
+    width: 100%;
+  }
+
   .gs-chart-grid {
-    grid-template-columns: 28px minmax(0, 1fr);
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 6px;
+  }
+
+  .gs-corner,
+  .gs-months,
+  .gs-weekdays,
+  .gs-legend,
+  .gs-footnote,
+  .gs-chart-heading p {
+    display: none;
+  }
+
+  .gs-header {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .gs-kicker {
+    display: none;
+  }
+
+  .gs-title {
+    font-size: 1rem;
+    white-space: normal;
+  }
+
+  .gs-subtitle {
+    margin-top: 4px;
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+
+  .gs-theme-toggle {
+    justify-self: start;
+  }
+
+  .gs-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .gs-stat-card {
+    padding: 9px 8px;
+  }
+
+  .gs-stat-label {
+    font-size: 0.64rem;
+    letter-spacing: 0.02em;
+  }
+
+  .gs-stat-value {
+    margin-top: 2px;
+    font-size: 1rem;
+  }
+
+  .gs-chart-card {
+    padding: 12px;
+  }
+
+  .gs-chart-heading {
+    margin-bottom: 8px;
+  }
+
+  .gs-chart-heading h3 {
+    font-size: 0.88rem;
+  }
+
+  .gs-status-badge {
+    min-height: 24px;
+    padding: 3px 9px;
+    font-size: 0.68rem;
+  }
+
+  .gs-board-shell {
+    margin: 0 -4px;
+    padding: 0 4px 8px;
   }
 
   .gs-footer {
     flex-direction: column;
     align-items: start;
+    gap: 10px;
   }
 
   .gs-footer-actions {
     width: 100%;
-    flex-direction: column;
-    align-items: start;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: stretch;
   }
 
   .gs-controls {
     width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .gs-button {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .gs-touch-controls {
+    display: grid;
+  }
+}
+
+@media (max-width: 520px) {
+  .gs-container {
+    --gs-cell-size: 19px;
+    --gs-gap-size: 4px;
+  }
+
+  .gs-subtitle {
+    display: none;
+  }
+
+  .gs-theme-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .gs-theme-button {
     flex: 1;
+    text-align: center;
+  }
+
+  .gs-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .gs-footer-actions {
+    flex-direction: column;
+  }
+
+  .gs-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .gs-touch-row {
+    grid-template-columns: repeat(3, minmax(0, 58px));
+  }
+
+  .gs-touch-button {
+    width: 58px;
+    height: 48px;
+  }
+
+  .gs-touch-up {
+    width: 64px;
   }
 }
