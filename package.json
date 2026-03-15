@@ -1,6 +1,6 @@
 {
   "name": "github-snake",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Embeddable GitHub-style Snake contribution chart for websites.",
   "type": "module",
   "main": "./dist/github-snake.cjs",
