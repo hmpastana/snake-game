@@ -4,6 +4,9 @@
   --gs-border: #30363d;
   --gs-text: #c9d1d9;
   --gs-muted: #8b949e;
+  --gs-host-text: var(--gs-text);
+  --gs-host-muted: var(--gs-muted);
+  --gs-font-family: inherit;
   --gs-button-bg: #21262d;
   --gs-button-hover: #30363d;
   --gs-button-primary: #238636;
@@ -21,8 +24,8 @@
   --gs-cols: 53;
   --gs-cell-size: 16px;
   --gs-gap-size: 3px;
-  color: var(--gs-text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: var(--gs-host-text);
+  font-family: var(--gs-font-family);
   background: transparent;
   transition: background-color 180ms ease, color 180ms ease;
 }
@@ -39,7 +42,7 @@
 .gs-shell {
   width: min(100%, 980px);
   margin: 0 auto;
-  color: var(--gs-text);
+  color: var(--gs-host-text);
 }
 
 .gs-header {
@@ -57,7 +60,7 @@
 .gs-weekdays,
 .gs-legend,
 .gs-chart-heading p {
-  color: var(--gs-muted);
+  color: var(--gs-host-muted);
 }
 
 .gs-kicker {
@@ -67,7 +70,10 @@
 
 .gs-title {
   margin: 0;
-  font-size: clamp(1.4rem, 3vw, 1.95rem);
+  font-size: clamp(1.05rem, 2.1vw, 1.35rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .gs-subtitle {
@@ -95,7 +101,7 @@
 .gs-theme-button {
   border: 0;
   background: transparent;
-  color: var(--gs-muted);
+  color: var(--gs-host-muted);
   border-radius: 999px;
   padding: 7px 12px;
   font: inherit;
@@ -106,12 +112,12 @@
 
 .gs-theme-button:hover {
   background: var(--gs-button-hover);
-  color: var(--gs-text);
+  color: var(--gs-host-text);
 }
 
 .gs-theme-button.is-active {
   background: var(--gs-button-bg);
-  color: var(--gs-text);
+  color: var(--gs-host-text);
   box-shadow: inset 0 0 0 1px var(--gs-border);
 }
 
@@ -129,7 +135,7 @@
 .gs-stat-label {
   display: block;
   font-size: 0.76rem;
-  color: var(--gs-muted);
+  color: var(--gs-host-muted);
 }
 
 .gs-stat-value {
@@ -296,7 +302,7 @@
 
 .gs-overlay-card p {
   margin: 0;
-  color: var(--gs-muted);
+  color: var(--gs-host-muted);
   font-size: 0.88rem;
   line-height: 1.5;
 }
@@ -331,7 +337,7 @@
 .gs-button {
   border: 1px solid var(--gs-border);
   background: var(--gs-button-bg);
-  color: var(--gs-text);
+  color: var(--gs-host-text);
   border-radius: 6px;
   padding: 8px 12px;
   font: inherit;
@@ -372,7 +378,7 @@
   padding: 4px 10px;
   border: 1px solid var(--gs-border);
   border-radius: 999px;
-  color: var(--gs-text);
+  color: var(--gs-host-text);
   background: rgba(48, 54, 61, 0.45);
   font-size: 0.74rem;
   white-space: nowrap;

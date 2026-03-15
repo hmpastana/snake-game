@@ -31,6 +31,7 @@ export function createGithubSnake(options: GithubSnakeOptions): GithubSnakeInsta
     difficulty: config.difficulty,
   });
   const renderer = new DomRenderer(config);
+  applyHostAppearance(renderer, config.target);
   let previousScore = 0;
   let previousStatus = core.getSnapshot().status;
 
@@ -41,6 +42,7 @@ export function createGithubSnake(options: GithubSnakeOptions): GithubSnakeInsta
     onThemeChange: (theme) => {
       activeTheme = theme;
       applyTheme(renderer, theme);
+      applyHostAppearance(renderer, config.target);
       writeThemePreference(config.storageKey, theme);
       dispatchThemeChange(config.target, theme);
     },
@@ -100,6 +102,7 @@ export function createGithubSnake(options: GithubSnakeOptions): GithubSnakeInsta
     setTheme: (theme, customColors) => {
       activeTheme = theme;
       renderer.setTheme(resolveThemeColors(theme, customColors), theme);
+      applyHostAppearance(renderer, config.target);
       writeThemePreference(config.storageKey, theme);
       dispatchThemeChange(config.target, theme);
     },
@@ -107,6 +110,10 @@ export function createGithubSnake(options: GithubSnakeOptions): GithubSnakeInsta
       core.setSpeed(speed);
     },
   };
+}
+
+function applyHostAppearance(renderer: DomRenderer, target: HTMLElement): void {
+  renderer.setHostAppearance(resolveHostAppearance(target));
 }
 
 function resolveInitialTheme(options: GithubSnakeOptions): GithubSnakeThemeName {
@@ -200,6 +207,91 @@ function writeThemePreference(storageKey: string, theme: GithubSnakeThemeName): 
 
 function applyTheme(renderer: DomRenderer, theme: GithubSnakeThemeName): void {
   renderer.setTheme(resolveThemeColors(theme), theme);
+}
+
+function resolveHostAppearance(target: HTMLElement): {
+  textColor?: string;
+  mutedTextColor?: string;
+  fontFamily?: string;
+} {
+  const computed = getComputedStyle(target);
+  const rawTextColor = computed.color || getComputedStyle(document.body).color;
+  const rawFontFamily = computed.fontFamily || getComputedStyle(document.body).fontFamily;
+  const textColor = shouldUseHostTextColor(rawTextColor) ? rawTextColor : undefined;
+  const fontFamily = shouldUseHostFont(rawFontFamily) ? rawFontFamily : undefined;
+
+  return {
+    textColor,
+    mutedTextColor: textColor ? createMutedColor(textColor) : undefined,
+    fontFamily,
+  };
+}
+
+function shouldUseHostFont(fontFamily: string): boolean {
+  const normalized = fontFamily.trim().toLowerCase();
+
+  if (!normalized) {
+    return false;
+  }
+
+  if (normalized === "serif" || normalized === "sans-serif" || normalized === "monospace") {
+    return false;
+  }
+
+  if (normalized.includes("times new roman")) {
+    return false;
+  }
+
+  return true;
+}
+
+function shouldUseHostTextColor(color: string): boolean {
+  const normalized = color.trim().toLowerCase();
+
+  if (!normalized) {
+    return false;
+  }
+
+  if (isLocalEnvironment() && isDefaultDarkTextColor(normalized)) {
+    return false;
+  }
+
+  return true;
+}
+
+function isLocalEnvironment(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return ["localhost", "127.0.0.1", "0.0.0.0"].includes(window.location.hostname);
+}
+
+function isDefaultDarkTextColor(color: string): boolean {
+  return color === "rgb(0, 0, 0)"
+    || color === "rgba(0, 0, 0, 1)"
+    || color === "#000"
+    || color === "#000000"
+    || color === "black"
+    || color === "canvastext";
+}
+
+function createMutedColor(color: string): string {
+  const rgbMatch = color.match(/^rgba?\(([^)]+)\)$/i);
+  if (!rgbMatch) {
+    return color;
+  }
+
+  const parts = rgbMatch[1]
+    .split(",")
+    .map((part) => part.trim())
+    .slice(0, 3);
+
+  if (parts.length !== 3) {
+    return color;
+  }
+
+  return `rgba(${parts.join(", ")}, 0.72)`;
 }
 
 function dispatchThemeChange(target: HTMLElement, theme: GithubSnakeThemeName): void {

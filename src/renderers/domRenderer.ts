@@ -76,7 +76,7 @@ export class DomRenderer {
     this.scoreValue.textContent = String(snapshot.score);
     this.bestScoreValue.textContent = String(snapshot.bestScore);
     this.totalCommitsValue.textContent = String(snapshot.totalCommits);
-    this.statusBadge.textContent = snapshot.statusMessage ?? `Velocity ${snapshot.difficultyLevel + 1}`;
+    this.statusBadge.textContent = snapshot.statusMessage ?? `Speed Level ${snapshot.difficultyLevel + 1}`;
     this.statusBadge.classList.toggle("gs-hidden", !snapshot.statusMessage && snapshot.status === "idle");
 
     const snakeMap = new Map(snapshot.snake.map((segment, index) => [`${segment.x},${segment.y}`, index]));
@@ -110,7 +110,7 @@ export class DomRenderer {
 
     this.updateOverlay(snapshot);
     this.primaryButton.dataset.state = snapshot.status === "running" ? "pause" : "start";
-    this.primaryButton.textContent = snapshot.status === "running" ? "Pause" : "Start";
+    this.primaryButton.textContent = snapshot.status === "running" ? "Pause Game" : "Start Game";
   }
 
   setTheme(colors: GithubSnakeColors, themeName: GithubSnakeThemeName): void {
@@ -122,6 +122,20 @@ export class DomRenderer {
 
   destroy(): void {
     this.root.remove();
+  }
+
+  setHostAppearance(appearance: { textColor?: string; mutedTextColor?: string; fontFamily?: string }): void {
+    if (appearance.textColor) {
+      this.root.style.setProperty("--gs-host-text", appearance.textColor);
+    }
+
+    if (appearance.mutedTextColor) {
+      this.root.style.setProperty("--gs-host-muted", appearance.mutedTextColor);
+    }
+
+    if (appearance.fontFamily) {
+      this.root.style.setProperty("--gs-font-family", appearance.fontFamily);
+    }
   }
 
   private createCells(): void {
@@ -183,8 +197,8 @@ export class DomRenderer {
         <header class="gs-header">
           <div>
             <p class="gs-kicker">GitHub Snake</p>
-            <h2 class="gs-title">Playable contribution graph</h2>
-            <p class="gs-subtitle">Embeddable GitHub-style Snake for websites and future npm packaging.</p>
+            <h2 class="gs-title">Don't Break the Branch</h2>
+            <p class="gs-subtitle">Navigate the contribution graph and collect commits. But don't break the branch.</p>
           </div>
           <div class="gs-theme-toggle" aria-label="Theme toggle">
             <button class="gs-theme-button" type="button" data-gs-theme-light>Light</button>
@@ -209,10 +223,10 @@ export class DomRenderer {
         <div class="gs-chart-card">
           <div class="gs-chart-heading">
             <div class="gs-chart-heading-top">
-              <h3>Contribution activity</h3>
+              <h3>Contribution Activity</h3>
               <span class="gs-status-badge gs-hidden" data-gs-status></span>
             </div>
-            <p>Snake moves inside a real ${this.config.rows} x ${this.config.cols} contribution chart.</p>
+            <p>The snake moves across a real GitHub-style activity grid.</p>
           </div>
 
           <div class="gs-chart-grid">
@@ -236,8 +250,8 @@ export class DomRenderer {
             <p class="gs-footnote">Learn how we count contributions</p>
             <div class="gs-footer-actions">
               <div class="gs-controls ${this.config.showControls ? "" : "gs-hidden"}">
-                <button class="gs-button gs-button-primary" type="button" data-gs-start>Start</button>
-                <button class="gs-button" type="button" data-gs-restart>Restart</button>
+                <button class="gs-button gs-button-primary" type="button" data-gs-start>Start Game</button>
+                <button class="gs-button" type="button" data-gs-restart>Restart Run</button>
               </div>
               <div class="gs-legend ${this.config.showLegend ? "" : "gs-hidden"}" aria-label="Contribution legend">
                 <span>Less</span>
@@ -285,12 +299,12 @@ function getOverlayContent(status: GameStatus, totalCommits: number): { title: s
     case "paused":
       return {
         title: "Paused",
-        text: "Press Start or your keyboard controls to keep the streak going.",
+        text: "Press Start Game or use your keyboard controls to keep the streak going.",
       };
     case "over":
       return {
         title: "Game Over",
-        text: `You collected ${totalCommits} commit${totalCommits === 1 ? "" : "s"} before the branch broke.`,
+        text: "Your branch broke",
       };
     default:
       return {

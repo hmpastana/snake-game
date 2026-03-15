@@ -1,4 +1,4 @@
-const k = {
+const S = {
   "github-dark": {
     pageBackground: "#0D1117",
     chartBackground: "#161B22",
@@ -42,20 +42,20 @@ const k = {
     overlayBackground: "rgba(255, 255, 255, 0.92)"
   }
 };
-function x(e) {
-  const t = T(e.target), s = e.theme ?? "github-dark", r = u(e.speed, 170, 40), a = {
-    ...k[s],
+function T(e) {
+  const t = C(e.target), s = e.theme ?? "github-dark", a = c(e.speed, 170, 40), r = {
+    ...S[s],
     ...e.customColors
   };
   return {
     target: t,
-    rows: u(e.rows, 7, 4),
-    cols: u(e.cols, 53, 12),
-    cellSize: u(e.cellSize, 14, 8),
-    gapSize: u(e.gapSize, 3, 1),
+    rows: c(e.rows, 7, 4),
+    cols: c(e.cols, 53, 12),
+    cellSize: c(e.cellSize, 14, 8),
+    gapSize: c(e.gapSize, 3, 1),
     theme: s,
-    colors: a,
-    speed: r,
+    colors: r,
+    speed: a,
     showLegend: e.showLegend ?? !0,
     showMonthLabels: e.showMonthLabels ?? !0,
     showWeekdayLabels: e.showWeekdayLabels ?? !0,
@@ -66,10 +66,10 @@ function x(e) {
     storageKey: e.storageKey ?? "github-snake-best-score",
     onScoreChange: e.onScoreChange,
     onGameOver: e.onGameOver,
-    difficulty: E(r, e.difficulty)
+    difficulty: E(a, e.difficulty)
   };
 }
-function T(e) {
+function C(e) {
   if (typeof e != "string")
     return e;
   const t = document.querySelector(e);
@@ -77,13 +77,13 @@ function T(e) {
     throw new Error(`GitHub Snake could not find target element: ${e}`);
   return t;
 }
-function S(e, t) {
+function w(e, t) {
   return {
-    ...k[e],
+    ...S[e],
     ...t
   };
 }
-function u(e, t, s) {
+function c(e, t, s) {
   return typeof e != "number" || Number.isNaN(e) ? t : Math.max(s, Math.floor(e));
 }
 function E(e, t) {
@@ -97,40 +97,40 @@ function E(e, t) {
     statusMessageDuration: (t == null ? void 0 : t.statusMessageDuration) ?? 1200
   };
 }
-function C(e, t) {
+function B(e, t) {
   return Array.from({ length: e }, () => Array(t).fill(0));
 }
-function B(e) {
+function M(e) {
   return e.map((t) => [...t]);
 }
 function d(e) {
   return `${e.x},${e.y}`;
 }
-function M(e, t, s) {
+function L(e, t, s) {
   return e.x >= 0 && e.y >= 0 && e.x < s && e.y < t;
 }
-function L(e, t, s) {
-  return !M(e, t, s);
-}
 function D(e, t, s) {
-  const r = s ? t : t.slice(0, -1), a = d(e);
-  return r.some((o) => d(o) === a);
+  return !L(e, t, s);
+}
+function F(e, t, s) {
+  const a = s ? t : t.slice(0, -1), r = d(e);
+  return a.some((i) => d(i) === r);
 }
 function p(e, t, s) {
-  const r = new Set(s.map(d)), a = [];
-  for (let o = 0; o < e; o += 1)
+  const a = new Set(s.map(d)), r = [];
+  for (let i = 0; i < e; i += 1)
     for (let n = 0; n < t; n += 1) {
-      const h = { x: n, y: o };
-      r.has(d(h)) || a.push(h);
+      const l = { x: n, y: i };
+      a.has(d(l)) || r.push(l);
     }
-  return a.length === 0 ? null : a[Math.floor(Math.random() * a.length)];
+  return r.length === 0 ? null : r[Math.floor(Math.random() * r.length)];
 }
 function P(e, t) {
-  const s = Math.floor(t / 2), r = Math.floor(e / 2);
+  const s = Math.floor(t / 2), a = Math.floor(e / 2);
   return [
-    { x: s, y: r },
-    { x: s - 1, y: r },
-    { x: s - 2, y: r }
+    { x: s, y: a },
+    { x: s - 1, y: a },
+    { x: s - 2, y: a }
   ];
 }
 function g(e) {
@@ -142,22 +142,22 @@ function A(e, t) {
     y: e.y + t.y
   };
 }
-function f(e, t) {
+function v(e, t) {
   return e.x === -t.x && e.y === -t.y;
 }
-class F {
+class $ {
   constructor(t) {
     this.listeners = /* @__PURE__ */ new Set(), this.animationFrameId = 0, this.lastTimestamp = 0, this.accumulatedTime = 0, this.flashes = /* @__PURE__ */ new Map(), this.status = "idle", this.score = 0, this.bestScore = 0, this.totalCommits = 0, this.streak = 0, this.difficultyLevel = 0, this.snake = [], this.previousSnake = [], this.food = null, this.contributions = [], this.direction = { x: 1, y: 0 }, this.queuedDirection = { x: 1, y: 0 }, this.statusMessage = null, this.statusMessageTimeRemaining = 0, this.frame = (s) => {
       this.lastTimestamp || (this.lastTimestamp = s);
-      const r = Math.min(32, s - this.lastTimestamp);
+      const a = Math.min(32, s - this.lastTimestamp);
       if (this.lastTimestamp = s, this.status === "running") {
-        for (this.accumulatedTime += r; this.accumulatedTime >= this.speed; )
+        for (this.accumulatedTime += a; this.accumulatedTime >= this.speed; )
           if (this.accumulatedTime -= this.speed, this.step(), this.status !== "running") {
             this.accumulatedTime = 0;
             break;
           }
       }
-      this.updateEffects(r), this.emit(), this.animationFrameId = window.requestAnimationFrame(this.frame);
+      this.updateEffects(a), this.emit(), this.animationFrameId = window.requestAnimationFrame(this.frame);
     }, this.rows = t.rows, this.cols = t.cols, this.difficulty = t.difficulty, this.baseSpeed = t.baseSpeed, this.speed = t.baseSpeed, this.bestScore = t.bestScore ?? 0, this.resetState(), this.emit(), this.animationFrameId = window.requestAnimationFrame(this.frame);
   }
   subscribe(t) {
@@ -185,7 +185,7 @@ class F {
     this.baseSpeed = Math.max(40, Math.floor(t)), this.speed = this.calculateSpeed(), this.emit();
   }
   setDirection(t) {
-    this.snake.length > 1 && f(this.direction, t) || (this.queuedDirection = t);
+    this.snake.length > 1 && v(this.direction, t) || (this.queuedDirection = t);
   }
   setBestScore(t) {
     this.bestScore = t, this.emit();
@@ -194,12 +194,12 @@ class F {
     return this.snapshot();
   }
   resetState() {
-    this.snake = P(this.rows, this.cols), this.previousSnake = g(this.snake), this.direction = { x: 1, y: 0 }, this.queuedDirection = { x: 1, y: 0 }, this.food = p(this.rows, this.cols, this.snake), this.score = 0, this.totalCommits = 0, this.streak = 0, this.difficultyLevel = 0, this.accumulatedTime = 0, this.lastTimestamp = 0, this.speed = this.baseSpeed, this.status = "idle", this.contributions = C(this.rows, this.cols), this.flashes.clear(), this.statusMessage = null, this.statusMessageTimeRemaining = 0;
+    this.snake = P(this.rows, this.cols), this.previousSnake = g(this.snake), this.direction = { x: 1, y: 0 }, this.queuedDirection = { x: 1, y: 0 }, this.food = p(this.rows, this.cols, this.snake), this.score = 0, this.totalCommits = 0, this.streak = 0, this.difficultyLevel = 0, this.accumulatedTime = 0, this.lastTimestamp = 0, this.speed = this.baseSpeed, this.status = "idle", this.contributions = B(this.rows, this.cols), this.flashes.clear(), this.statusMessage = null, this.statusMessageTimeRemaining = 0;
   }
   step() {
-    this.previousSnake = g(this.snake), f(this.direction, this.queuedDirection) || (this.direction = { ...this.queuedDirection });
+    this.previousSnake = g(this.snake), v(this.direction, this.queuedDirection) || (this.direction = { ...this.queuedDirection });
     const t = A(this.snake[0], this.direction), s = !!this.food && t.x === this.food.x && t.y === this.food.y;
-    if (L(t, this.rows, this.cols) || D(t, this.snake, s)) {
+    if (D(t, this.rows, this.cols) || F(t, this.snake, s)) {
       this.status = "over";
       return;
     }
@@ -219,15 +219,15 @@ class F {
     return Math.max(this.difficulty.maxSpeed, this.baseSpeed - t * this.difficulty.speedStep);
   }
   getDifficultyLevel(t) {
-    return this.difficulty.thresholds.reduce((s, r) => t >= r ? s + 1 : s, 0);
+    return this.difficulty.thresholds.reduce((s, a) => t >= a ? s + 1 : s, 0);
   }
   setStatusMessage(t) {
     this.statusMessage = t, this.statusMessageTimeRemaining = this.difficulty.statusMessageDuration;
   }
   updateEffects(t) {
-    for (const [s, r] of this.flashes.entries()) {
-      const a = r - t;
-      a <= 0 ? this.flashes.delete(s) : this.flashes.set(s, a);
+    for (const [s, a] of this.flashes.entries()) {
+      const r = a - t;
+      r <= 0 ? this.flashes.delete(s) : this.flashes.set(s, r);
     }
     this.statusMessageTimeRemaining > 0 && (this.statusMessageTimeRemaining -= t, this.statusMessageTimeRemaining <= 0 && (this.statusMessageTimeRemaining = 0, this.statusMessage = null));
   }
@@ -245,7 +245,7 @@ class F {
       snake: g(this.snake),
       previousSnake: g(this.previousSnake),
       food: this.food ? { ...this.food } : null,
-      contributions: B(this.contributions),
+      contributions: M(this.contributions),
       score: this.score,
       bestScore: this.bestScore,
       totalCommits: this.totalCommits,
@@ -257,7 +257,7 @@ class F {
     };
   }
 }
-class $ {
+class H {
   constructor(t) {
     this.cells = /* @__PURE__ */ new Map(), this.config = t, this.currentTheme = t.theme, this.root = document.createElement("div"), this.root.className = `gs-container gs-theme-${t.theme}`, this.applyTheme(t.colors), this.root.innerHTML = this.template(), t.target.innerHTML = "", t.target.appendChild(this.root), this.scoreValue = this.requireElement("[data-gs-score]"), this.bestScoreValue = this.requireElement("[data-gs-best-score]"), this.totalCommitsValue = this.requireElement("[data-gs-total-commits]"), this.boardElement = this.requireElement("[data-gs-board]"), this.overlay = this.requireElement("[data-gs-overlay]"), this.overlayTitle = this.requireElement("[data-gs-overlay-title]"), this.overlayText = this.requireElement("[data-gs-overlay-text]"), this.statusBadge = this.requireElement("[data-gs-status]"), this.primaryButton = this.requireElement("[data-gs-start]"), this.restartButton = this.requireElement("[data-gs-restart]"), this.lightThemeButton = this.requireElement("[data-gs-theme-light]"), this.darkThemeButton = this.requireElement("[data-gs-theme-dark]"), this.boardElement.style.setProperty("--gs-cols", String(t.cols)), this.boardElement.style.setProperty("--gs-cell-size", `${t.cellSize}px`), this.boardElement.style.setProperty("--gs-gap-size", `${t.gapSize}px`), this.createCells(), this.updateThemeButtons();
   }
@@ -271,17 +271,17 @@ class $ {
     }), this.restartButton.addEventListener("click", t.onRestart), this.lightThemeButton.addEventListener("click", () => t.onThemeChange("github-light")), this.darkThemeButton.addEventListener("click", () => t.onThemeChange("github-dark"));
   }
   render(t) {
-    this.scoreValue.textContent = String(t.score), this.bestScoreValue.textContent = String(t.bestScore), this.totalCommitsValue.textContent = String(t.totalCommits), this.statusBadge.textContent = t.statusMessage ?? `Velocity ${t.difficultyLevel + 1}`, this.statusBadge.classList.toggle("gs-hidden", !t.statusMessage && t.status === "idle");
-    const s = new Map(t.snake.map((a, o) => [`${a.x},${a.y}`, o])), r = t.food ? `${t.food.x},${t.food.y}` : "";
-    for (let a = 0; a < t.rows; a += 1)
-      for (let o = 0; o < t.cols; o += 1) {
-        const n = `${o},${a}`, h = this.cells.get(n);
-        if (!h)
+    this.scoreValue.textContent = String(t.score), this.bestScoreValue.textContent = String(t.bestScore), this.totalCommitsValue.textContent = String(t.totalCommits), this.statusBadge.textContent = t.statusMessage ?? `Speed Level ${t.difficultyLevel + 1}`, this.statusBadge.classList.toggle("gs-hidden", !t.statusMessage && t.status === "idle");
+    const s = new Map(t.snake.map((r, i) => [`${r.x},${r.y}`, i])), a = t.food ? `${t.food.x},${t.food.y}` : "";
+    for (let r = 0; r < t.rows; r += 1)
+      for (let i = 0; i < t.cols; i += 1) {
+        const n = `${i},${r}`, l = this.cells.get(n);
+        if (!l)
           continue;
-        const l = ["gs-cell", `gs-level-${t.contributions[a][o]}`];
-        t.flashKeys.has(n) && l.push("gs-flash"), r === n && l.push("gs-food"), s.has(n) && (l.push("gs-snake"), l.push(s.get(n) === 0 ? "gs-snake-head" : "gs-snake-body")), h.className = l.join(" ");
+        const h = ["gs-cell", `gs-level-${t.contributions[r][i]}`];
+        t.flashKeys.has(n) && h.push("gs-flash"), a === n && h.push("gs-food"), s.has(n) && (h.push("gs-snake"), h.push(s.get(n) === 0 ? "gs-snake-head" : "gs-snake-body")), l.className = h.join(" ");
       }
-    this.updateOverlay(t), this.primaryButton.dataset.state = t.status === "running" ? "pause" : "start", this.primaryButton.textContent = t.status === "running" ? "Pause" : "Start";
+    this.updateOverlay(t), this.primaryButton.dataset.state = t.status === "running" ? "pause" : "start", this.primaryButton.textContent = t.status === "running" ? "Pause Game" : "Start Game";
   }
   setTheme(t, s) {
     this.root.className = `gs-container gs-theme-${s}`, this.currentTheme = s, this.applyTheme(t), this.updateThemeButtons();
@@ -289,12 +289,15 @@ class $ {
   destroy() {
     this.root.remove();
   }
+  setHostAppearance(t) {
+    t.textColor && this.root.style.setProperty("--gs-host-text", t.textColor), t.mutedTextColor && this.root.style.setProperty("--gs-host-muted", t.mutedTextColor), t.fontFamily && this.root.style.setProperty("--gs-font-family", t.fontFamily);
+  }
   createCells() {
     const t = document.createDocumentFragment();
     for (let s = 0; s < this.config.rows; s += 1)
-      for (let r = 0; r < this.config.cols; r += 1) {
-        const a = document.createElement("div"), o = `${r},${s}`;
-        a.className = "gs-cell gs-level-0", a.dataset.position = o, this.cells.set(o, a), t.appendChild(a);
+      for (let a = 0; a < this.config.cols; a += 1) {
+        const r = document.createElement("div"), i = `${a},${s}`;
+        r.className = "gs-cell gs-level-0", r.dataset.position = i, this.cells.set(i, r), t.appendChild(r);
       }
     this.boardElement.appendChild(t);
   }
@@ -306,14 +309,14 @@ class $ {
     this.root.style.setProperty("--gs-page-bg", t.pageBackground), this.root.style.setProperty("--gs-chart-bg", t.chartBackground), this.root.style.setProperty("--gs-border", t.border), this.root.style.setProperty("--gs-text", t.text), this.root.style.setProperty("--gs-muted", t.mutedText), this.root.style.setProperty("--gs-button-bg", t.buttonBackground), this.root.style.setProperty("--gs-button-hover", t.buttonHover), this.root.style.setProperty("--gs-button-primary", t.buttonPrimary), this.root.style.setProperty("--gs-button-primary-hover", t.buttonPrimaryHover), this.root.style.setProperty("--gs-cell-0", t.cellEmpty), this.root.style.setProperty("--gs-cell-1", t.cellLow), this.root.style.setProperty("--gs-cell-2", t.cellMedium), this.root.style.setProperty("--gs-cell-3", t.cellHigh), this.root.style.setProperty("--gs-cell-4", t.cellHighest), this.root.style.setProperty("--gs-snake", t.snake), this.root.style.setProperty("--gs-snake-tail", t.snakeTail), this.root.style.setProperty("--gs-food", t.food), this.root.style.setProperty("--gs-food-core", t.foodCore), this.root.style.setProperty("--gs-overlay", t.overlayBackground);
   }
   template() {
-    const t = this.config.showMonthLabels ? this.config.months.map((r) => `<span class="gs-month">${r}</span>`).join("") : "", s = this.config.showWeekdayLabels ? this.config.weekdays.map((r) => `<span class="gs-weekday">${r}</span>`).join("") : "";
+    const t = this.config.showMonthLabels ? this.config.months.map((a) => `<span class="gs-month">${a}</span>`).join("") : "", s = this.config.showWeekdayLabels ? this.config.weekdays.map((a) => `<span class="gs-weekday">${a}</span>`).join("") : "";
     return `
       <section class="gs-shell">
         <header class="gs-header">
           <div>
             <p class="gs-kicker">GitHub Snake</p>
-            <h2 class="gs-title">Playable contribution graph</h2>
-            <p class="gs-subtitle">Embeddable GitHub-style Snake for websites and future npm packaging.</p>
+            <h2 class="gs-title">Don't Break the Branch</h2>
+            <p class="gs-subtitle">Navigate the contribution graph and collect commits. But don't break the branch.</p>
           </div>
           <div class="gs-theme-toggle" aria-label="Theme toggle">
             <button class="gs-theme-button" type="button" data-gs-theme-light>Light</button>
@@ -338,10 +341,10 @@ class $ {
         <div class="gs-chart-card">
           <div class="gs-chart-heading">
             <div class="gs-chart-heading-top">
-              <h3>Contribution activity</h3>
+              <h3>Contribution Activity</h3>
               <span class="gs-status-badge gs-hidden" data-gs-status></span>
             </div>
-            <p>Snake moves inside a real ${this.config.rows} x ${this.config.cols} contribution chart.</p>
+            <p>The snake moves across a real GitHub-style activity grid.</p>
           </div>
 
           <div class="gs-chart-grid">
@@ -365,8 +368,8 @@ class $ {
             <p class="gs-footnote">Learn how we count contributions</p>
             <div class="gs-footer-actions">
               <div class="gs-controls ${this.config.showControls ? "" : "gs-hidden"}">
-                <button class="gs-button gs-button-primary" type="button" data-gs-start>Start</button>
-                <button class="gs-button" type="button" data-gs-restart>Restart</button>
+                <button class="gs-button gs-button-primary" type="button" data-gs-start>Start Game</button>
+                <button class="gs-button" type="button" data-gs-restart>Restart Run</button>
               </div>
               <div class="gs-legend ${this.config.showLegend ? "" : "gs-hidden"}" aria-label="Contribution legend">
                 <span>Less</span>
@@ -406,12 +409,12 @@ function q(e, t) {
     case "paused":
       return {
         title: "Paused",
-        text: "Press Start or your keyboard controls to keep the streak going."
+        text: "Press Start Game or use your keyboard controls to keep the streak going."
       };
     case "over":
       return {
         title: "Game Over",
-        text: `You collected ${t} commit${t === 1 ? "" : "s"} before the branch broke.`
+        text: "Your branch broke"
       };
     default:
       return {
@@ -420,66 +423,70 @@ function q(e, t) {
       };
   }
 }
-function W(e) {
-  let t = H(e);
-  const s = x({
+function Y(e) {
+  let t = G(e);
+  const s = T({
     ...e,
     theme: t
   });
-  let r = R(s.storageKey);
-  const a = new F({
+  let a = j(s.storageKey);
+  const r = new $({
     rows: s.rows,
     cols: s.cols,
     baseSpeed: s.speed,
-    bestScore: r,
+    bestScore: a,
     difficulty: s.difficulty
-  }), o = new $(s);
-  let n = 0, h = a.getSnapshot().status;
-  o.bindControls({
-    onStart: () => a.start(),
-    onPause: () => a.pause(),
-    onRestart: () => a.restart(),
-    onThemeChange: (i) => {
-      t = i, G(o, i), v(s.storageKey, i), m(s.target, i);
+  }), i = new H(s);
+  m(i, s.target);
+  let n = 0, l = r.getSnapshot().status;
+  i.bindControls({
+    onStart: () => r.start(),
+    onPause: () => r.pause(),
+    onRestart: () => r.restart(),
+    onThemeChange: (o) => {
+      t = o, R(i, o), m(i, s.target), k(s.storageKey, o), y(s.target, o);
     }
   });
-  const l = a.subscribe((i) => {
-    var c, b;
-    o.render(i), i.bestScore !== r && (N(s.storageKey, i.bestScore), r = i.bestScore), i.score !== n && ((c = s.onScoreChange) == null || c.call(s, i.score, i.bestScore, i.totalCommits), n = i.score), h !== "over" && i.status === "over" && ((b = s.onGameOver) == null || b.call(s, i.score, i.totalCommits)), h = i.status;
-  }), y = (i) => {
-    const c = I(i.key);
-    c && (i.preventDefault(), a.setDirection(c), a.getSnapshot().status !== "running" && a.start());
+  const h = r.subscribe((o) => {
+    var u, f;
+    i.render(o), o.bestScore !== a && (J(s.storageKey, o.bestScore), a = o.bestScore), o.score !== n && ((u = s.onScoreChange) == null || u.call(s, o.score, o.bestScore, o.totalCommits), n = o.score), l !== "over" && o.status === "over" && ((f = s.onGameOver) == null || f.call(s, o.score, o.totalCommits)), l = o.status;
+  }), b = (o) => {
+    const u = U(o.key);
+    u && (o.preventDefault(), r.setDirection(u), r.getSnapshot().status !== "running" && r.start());
   };
-  return document.addEventListener("keydown", y), m(s.target, t), s.autoplay && a.start(), {
-    start: () => a.start(),
-    pause: () => a.pause(),
-    restart: () => a.restart(),
+  return document.addEventListener("keydown", b), y(s.target, t), s.autoplay && r.start(), {
+    start: () => r.start(),
+    pause: () => r.pause(),
+    restart: () => r.restart(),
     destroy: () => {
-      l(), document.removeEventListener("keydown", y), a.destroy(), o.destroy();
+      h(), document.removeEventListener("keydown", b), r.destroy(), i.destroy();
     },
-    setTheme: (i, c) => {
-      t = i, o.setTheme(S(i, c), i), v(s.storageKey, i), m(s.target, i);
+    setTheme: (o, u) => {
+      t = o, i.setTheme(w(o, u), o), m(i, s.target), k(s.storageKey, o), y(s.target, o);
     },
-    setSpeed: (i) => {
-      a.setSpeed(i);
+    setSpeed: (o) => {
+      r.setSpeed(o);
     }
   };
 }
-function H(e) {
-  var r;
+function m(e, t) {
+  e.setHostAppearance(I(t));
+}
+function G(e) {
+  var a;
   if (e.theme)
     return e.theme;
   const t = K(e.target);
   if (t)
     return t;
-  const s = w(e.storageKey);
+  const s = x(e.storageKey);
   try {
-    const a = window.localStorage.getItem(s);
-    if (a === "github-light" || a === "github-dark")
-      return a;
+    const r = window.localStorage.getItem(s);
+    if (r === "github-light" || r === "github-dark")
+      return r;
   } catch {
   }
-  return (r = window.matchMedia) != null && r.call(window, "(prefers-color-scheme: light)").matches ? "github-light" : "github-dark";
+  return (a = window.matchMedia) != null && a.call(window, "(prefers-color-scheme: light)").matches ? "github-light" : "github-dark";
 }
 function K(e) {
   if (typeof window > "u" || typeof document > "u")
@@ -490,36 +497,65 @@ function K(e) {
     document.documentElement,
     document.body
   ];
-  for (const a of s) {
-    if (!a)
+  for (const r of s) {
+    if (!r)
       continue;
-    const o = a.getAttribute("data-theme");
-    if (o === "light")
+    const i = r.getAttribute("data-theme");
+    if (i === "light")
       return "github-light";
-    if (o === "dark")
+    if (i === "dark")
       return "github-dark";
-    const n = Array.from(a.classList);
+    const n = Array.from(r.classList);
     if (n.includes("light"))
       return "github-light";
     if (n.includes("dark"))
       return "github-dark";
   }
-  const r = getComputedStyle(document.documentElement).colorScheme;
-  return r.includes("light") ? "github-light" : r.includes("dark") ? "github-dark" : null;
+  const a = getComputedStyle(document.documentElement).colorScheme;
+  return a.includes("light") ? "github-light" : a.includes("dark") ? "github-dark" : null;
 }
-function w(e) {
+function x(e) {
   return `${e ?? "github-snake-best-score"}-theme`;
 }
-function v(e, t) {
+function k(e, t) {
   try {
-    window.localStorage.setItem(w(e), t);
+    window.localStorage.setItem(x(e), t);
   } catch {
   }
 }
-function G(e, t) {
-  e.setTheme(S(t), t);
+function R(e, t) {
+  e.setTheme(w(t), t);
 }
-function m(e, t) {
+function I(e) {
+  const t = getComputedStyle(e), s = t.color || getComputedStyle(document.body).color, a = t.fontFamily || getComputedStyle(document.body).fontFamily, r = z(s) ? s : void 0, i = N(a) ? a : void 0;
+  return {
+    textColor: r,
+    mutedTextColor: r ? V(r) : void 0,
+    fontFamily: i
+  };
+}
+function N(e) {
+  const t = e.trim().toLowerCase();
+  return !(!t || t === "serif" || t === "sans-serif" || t === "monospace" || t.includes("times new roman"));
+}
+function z(e) {
+  const t = e.trim().toLowerCase();
+  return !(!t || W() && O(t));
+}
+function W() {
+  return typeof window > "u" ? !1 : ["localhost", "127.0.0.1", "0.0.0.0"].includes(window.location.hostname);
+}
+function O(e) {
+  return e === "rgb(0, 0, 0)" || e === "rgba(0, 0, 0, 1)" || e === "#000" || e === "#000000" || e === "black" || e === "canvastext";
+}
+function V(e) {
+  const t = e.match(/^rgba?\(([^)]+)\)$/i);
+  if (!t)
+    return e;
+  const s = t[1].split(",").map((a) => a.trim()).slice(0, 3);
+  return s.length !== 3 ? e : `rgba(${s.join(", ")}, 0.72)`;
+}
+function y(e, t) {
   e.dispatchEvent(
     new CustomEvent("github-snake:themechange", {
       detail: { theme: t },
@@ -527,7 +563,7 @@ function m(e, t) {
     })
   );
 }
-function I(e) {
+function U(e) {
   return {
     ArrowUp: { x: 0, y: -1 },
     ArrowDown: { x: 0, y: 1 },
@@ -543,19 +579,19 @@ function I(e) {
     D: { x: 1, y: 0 }
   }[e] ?? null;
 }
-function R(e) {
+function j(e) {
   try {
     return Number(window.localStorage.getItem(e) || 0);
   } catch {
     return 0;
   }
 }
-function N(e, t) {
+function J(e, t) {
   try {
     window.localStorage.setItem(e, String(t));
   } catch {
   }
 }
 export {
-  W as createGithubSnake
+  Y as createGithubSnake
 };

@@ -28,6 +28,11 @@ export declare class DomRenderer {
     render(snapshot: GameSnapshot): void;
     setTheme(colors: GithubSnakeColors, themeName: GithubSnakeThemeName): void;
     destroy(): void;
+    setHostAppearance(appearance: {
+        textColor?: string;
+        mutedTextColor?: string;
+        fontFamily?: string;
+    }): void;
     private createCells;
     private updateOverlay;
     private applyTheme;
