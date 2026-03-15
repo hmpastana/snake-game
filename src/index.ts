@@ -39,6 +39,13 @@ export function createGithubSnake(options: GithubSnakeOptions): GithubSnakeInsta
     onStart: () => core.start(),
     onPause: () => core.pause(),
     onRestart: () => core.restart(),
+    onDirection: (direction) => {
+      if (core.getSnapshot().status !== "running") {
+        return;
+      }
+
+      core.setDirection(direction);
+    },
     onThemeChange: (theme) => {
       activeTheme = theme;
       applyTheme(renderer, theme);
