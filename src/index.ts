@@ -17,7 +17,11 @@ export interface GithubSnakeInstance {
 }
 
 export function createGithubSnake(options: GithubSnakeOptions): GithubSnakeInstance {
-  const config = resolveConfig(options);
+  let activeTheme = resolveInitialTheme(options);
+  const config = resolveConfig({
+    ...options,
+    theme: activeTheme,
+  });
   let lastBestScore = readBestScore(config.storageKey);
   const core = new GithubSnakeCore({
     rows: config.rows,
@@ -34,6 +38,12 @@ export function createGithubSnake(options: GithubSnakeOptions): GithubSnakeInsta
     onStart: () => core.start(),
     onPause: () => core.pause(),
     onRestart: () => core.restart(),
+    onThemeChange: (theme) => {
+      activeTheme = theme;
+      applyTheme(renderer, theme);
+      writeThemePreference(config.storageKey, theme);
+      dispatchThemeChange(config.target, theme);
+    },
   });
 
   const unsubscribe = core.subscribe((snapshot) => {
@@ -71,6 +81,8 @@ export function createGithubSnake(options: GithubSnakeOptions): GithubSnakeInsta
 
   document.addEventListener("keydown", onKeyDown);
 
+  dispatchThemeChange(config.target, activeTheme);
+
   if (config.autoplay) {
     core.start();
   }
@@ -86,12 +98,60 @@ export function createGithubSnake(options: GithubSnakeOptions): GithubSnakeInsta
       renderer.destroy();
     },
     setTheme: (theme, customColors) => {
+      activeTheme = theme;
       renderer.setTheme(resolveThemeColors(theme, customColors), theme);
+      writeThemePreference(config.storageKey, theme);
+      dispatchThemeChange(config.target, theme);
     },
     setSpeed: (speed) => {
       core.setSpeed(speed);
     },
   };
+}
+
+function resolveInitialTheme(options: GithubSnakeOptions): GithubSnakeThemeName {
+  if (options.theme) {
+    return options.theme;
+  }
+
+  const themeStorageKey = getThemeStorageKey(options.storageKey);
+  try {
+    const savedTheme = window.localStorage.getItem(themeStorageKey);
+    if (savedTheme === "github-light" || savedTheme === "github-dark") {
+      return savedTheme;
+    }
+  } catch {
+    // Ignore storage errors and continue to OS preference.
+  }
+
+  return window.matchMedia?.("(prefers-color-scheme: light)").matches
+    ? "github-light"
+    : "github-dark";
+}
+
+function getThemeStorageKey(storageKey?: string): string {
+  return `${storageKey ?? "github-snake-best-score"}-theme`;
+}
+
+function writeThemePreference(storageKey: string, theme: GithubSnakeThemeName): void {
+  try {
+    window.localStorage.setItem(getThemeStorageKey(storageKey), theme);
+  } catch {
+    // Ignore storage failures for embeddable use.
+  }
+}
+
+function applyTheme(renderer: DomRenderer, theme: GithubSnakeThemeName): void {
+  renderer.setTheme(resolveThemeColors(theme), theme);
+}
+
+function dispatchThemeChange(target: HTMLElement, theme: GithubSnakeThemeName): void {
+  target.dispatchEvent(
+    new CustomEvent("github-snake:themechange", {
+      detail: { theme },
+      bubbles: true,
+    }),
+  );
 }
 
 function keyToDirection(key: string): Direction | null {

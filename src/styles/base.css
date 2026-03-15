@@ -23,6 +23,8 @@
   --gs-gap-size: 3px;
   color: var(--gs-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--gs-page-bg);
+  transition: background-color 180ms ease, color 180ms ease;
 }
 
 .gs-container,
@@ -42,7 +44,7 @@
 
 .gs-header {
   display: grid;
-  grid-template-columns: 1.6fr 1fr;
+  grid-template-columns: minmax(0, 1.5fr) auto minmax(280px, 1fr);
   gap: 12px;
   align-items: start;
   margin-bottom: 16px;
@@ -78,6 +80,39 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
+}
+
+.gs-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--gs-border);
+  border-radius: 999px;
+  background: var(--gs-chart-bg);
+}
+
+.gs-theme-button {
+  border: 0;
+  background: transparent;
+  color: var(--gs-muted);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.gs-theme-button:hover {
+  background: var(--gs-button-hover);
+  color: var(--gs-text);
+}
+
+.gs-theme-button.is-active {
+  background: var(--gs-button-bg);
+  color: var(--gs-text);
+  box-shadow: inset 0 0 0 1px var(--gs-border);
 }
 
 .gs-stat-card,
@@ -346,6 +381,10 @@
 @media (max-width: 920px) {
   .gs-header {
     grid-template-columns: 1fr;
+  }
+
+  .gs-theme-toggle {
+    justify-self: start;
   }
 }
 

@@ -1,10 +1,11 @@
 import type { GameSnapshot, GameStatus } from "../core/game";
-import type { GithubSnakeColors, ResolvedGithubSnakeConfig } from "../core/config";
+import type { GithubSnakeColors, GithubSnakeThemeName, ResolvedGithubSnakeConfig } from "../core/config";
 
 interface RendererControls {
   onStart: () => void;
   onPause: () => void;
   onRestart: () => void;
+  onThemeChange: (theme: GithubSnakeThemeName) => void;
 }
 
 export class DomRenderer {
@@ -20,10 +21,14 @@ export class DomRenderer {
   private readonly statusBadge: HTMLElement;
   private readonly primaryButton: HTMLButtonElement;
   private readonly restartButton: HTMLButtonElement;
+  private readonly lightThemeButton: HTMLButtonElement;
+  private readonly darkThemeButton: HTMLButtonElement;
   private readonly cells = new Map<string, HTMLDivElement>();
+  private currentTheme: GithubSnakeThemeName;
 
   constructor(config: ResolvedGithubSnakeConfig) {
     this.config = config;
+    this.currentTheme = config.theme;
     this.root = document.createElement("div");
     this.root.className = `gs-container gs-theme-${config.theme}`;
     this.applyTheme(config.colors);
@@ -41,12 +46,15 @@ export class DomRenderer {
     this.statusBadge = this.requireElement("[data-gs-status]");
     this.primaryButton = this.requireElement("[data-gs-start]");
     this.restartButton = this.requireElement("[data-gs-restart]");
+    this.lightThemeButton = this.requireElement("[data-gs-theme-light]");
+    this.darkThemeButton = this.requireElement("[data-gs-theme-dark]");
 
     this.boardElement.style.setProperty("--gs-cols", String(config.cols));
     this.boardElement.style.setProperty("--gs-cell-size", `${config.cellSize}px`);
     this.boardElement.style.setProperty("--gs-gap-size", `${config.gapSize}px`);
 
     this.createCells();
+    this.updateThemeButtons();
   }
 
   bindControls(controls: RendererControls): void {
@@ -60,6 +68,8 @@ export class DomRenderer {
     });
 
     this.restartButton.addEventListener("click", controls.onRestart);
+    this.lightThemeButton.addEventListener("click", () => controls.onThemeChange("github-light"));
+    this.darkThemeButton.addEventListener("click", () => controls.onThemeChange("github-dark"));
   }
 
   render(snapshot: GameSnapshot): void {
@@ -103,9 +113,11 @@ export class DomRenderer {
     this.primaryButton.textContent = snapshot.status === "running" ? "Pause" : "Start";
   }
 
-  setTheme(colors: GithubSnakeColors, themeName: string): void {
+  setTheme(colors: GithubSnakeColors, themeName: GithubSnakeThemeName): void {
     this.root.className = `gs-container gs-theme-${themeName}`;
+    this.currentTheme = themeName;
     this.applyTheme(colors);
+    this.updateThemeButtons();
   }
 
   destroy(): void {
@@ -173,6 +185,10 @@ export class DomRenderer {
             <p class="gs-kicker">GitHub Snake</p>
             <h2 class="gs-title">Playable contribution graph</h2>
             <p class="gs-subtitle">Embeddable GitHub-style Snake for websites and future npm packaging.</p>
+          </div>
+          <div class="gs-theme-toggle" aria-label="Theme toggle">
+            <button class="gs-theme-button" type="button" data-gs-theme-light>Light</button>
+            <button class="gs-theme-button" type="button" data-gs-theme-dark>Dark</button>
           </div>
           <div class="gs-stats">
             <article class="gs-stat-card">
@@ -248,6 +264,14 @@ export class DomRenderer {
     }
 
     return element;
+  }
+
+  private updateThemeButtons(): void {
+    const isLight = this.currentTheme === "github-light";
+    this.lightThemeButton.setAttribute("aria-pressed", String(isLight));
+    this.darkThemeButton.setAttribute("aria-pressed", String(!isLight));
+    this.lightThemeButton.classList.toggle("is-active", isLight);
+    this.darkThemeButton.classList.toggle("is-active", !isLight);
   }
 }
 
