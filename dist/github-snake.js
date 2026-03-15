@@ -136,16 +136,16 @@ function P(e, t) {
 function g(e) {
   return e.map((t) => ({ ...t }));
 }
-function F(e, t) {
+function A(e, t) {
   return {
     x: e.x + t.x,
     y: e.y + t.y
   };
 }
-function v(e, t) {
+function f(e, t) {
   return e.x === -t.x && e.y === -t.y;
 }
-class A {
+class F {
   constructor(t) {
     this.listeners = /* @__PURE__ */ new Set(), this.animationFrameId = 0, this.lastTimestamp = 0, this.accumulatedTime = 0, this.flashes = /* @__PURE__ */ new Map(), this.status = "idle", this.score = 0, this.bestScore = 0, this.totalCommits = 0, this.streak = 0, this.difficultyLevel = 0, this.snake = [], this.previousSnake = [], this.food = null, this.contributions = [], this.direction = { x: 1, y: 0 }, this.queuedDirection = { x: 1, y: 0 }, this.statusMessage = null, this.statusMessageTimeRemaining = 0, this.frame = (s) => {
       this.lastTimestamp || (this.lastTimestamp = s);
@@ -185,7 +185,7 @@ class A {
     this.baseSpeed = Math.max(40, Math.floor(t)), this.speed = this.calculateSpeed(), this.emit();
   }
   setDirection(t) {
-    this.snake.length > 1 && v(this.direction, t) || (this.queuedDirection = t);
+    this.snake.length > 1 && f(this.direction, t) || (this.queuedDirection = t);
   }
   setBestScore(t) {
     this.bestScore = t, this.emit();
@@ -197,8 +197,8 @@ class A {
     this.snake = P(this.rows, this.cols), this.previousSnake = g(this.snake), this.direction = { x: 1, y: 0 }, this.queuedDirection = { x: 1, y: 0 }, this.food = p(this.rows, this.cols, this.snake), this.score = 0, this.totalCommits = 0, this.streak = 0, this.difficultyLevel = 0, this.accumulatedTime = 0, this.lastTimestamp = 0, this.speed = this.baseSpeed, this.status = "idle", this.contributions = C(this.rows, this.cols), this.flashes.clear(), this.statusMessage = null, this.statusMessageTimeRemaining = 0;
   }
   step() {
-    this.previousSnake = g(this.snake), v(this.direction, this.queuedDirection) || (this.direction = { ...this.queuedDirection });
-    const t = F(this.snake[0], this.direction), s = !!this.food && t.x === this.food.x && t.y === this.food.y;
+    this.previousSnake = g(this.snake), f(this.direction, this.queuedDirection) || (this.direction = { ...this.queuedDirection });
+    const t = A(this.snake[0], this.direction), s = !!this.food && t.x === this.food.x && t.y === this.food.y;
     if (L(t, this.rows, this.cols) || D(t, this.snake, s)) {
       this.status = "over";
       return;
@@ -420,14 +420,14 @@ function q(e, t) {
       };
   }
 }
-function N(e) {
+function W(e) {
   let t = H(e);
   const s = x({
     ...e,
     theme: t
   });
-  let r = I(s.storageKey);
-  const a = new A({
+  let r = R(s.storageKey);
+  const a = new F({
     rows: s.rows,
     cols: s.cols,
     baseSpeed: s.speed,
@@ -440,14 +440,14 @@ function N(e) {
     onPause: () => a.pause(),
     onRestart: () => a.restart(),
     onThemeChange: (i) => {
-      t = i, K(o, i), f(s.storageKey, i), m(s.target, i);
+      t = i, G(o, i), v(s.storageKey, i), m(s.target, i);
     }
   });
   const l = a.subscribe((i) => {
     var c, b;
-    o.render(i), i.bestScore !== r && (R(s.storageKey, i.bestScore), r = i.bestScore), i.score !== n && ((c = s.onScoreChange) == null || c.call(s, i.score, i.bestScore, i.totalCommits), n = i.score), h !== "over" && i.status === "over" && ((b = s.onGameOver) == null || b.call(s, i.score, i.totalCommits)), h = i.status;
+    o.render(i), i.bestScore !== r && (N(s.storageKey, i.bestScore), r = i.bestScore), i.score !== n && ((c = s.onScoreChange) == null || c.call(s, i.score, i.bestScore, i.totalCommits), n = i.score), h !== "over" && i.status === "over" && ((b = s.onGameOver) == null || b.call(s, i.score, i.totalCommits)), h = i.status;
   }), y = (i) => {
-    const c = G(i.key);
+    const c = I(i.key);
     c && (i.preventDefault(), a.setDirection(c), a.getSnapshot().status !== "running" && a.start());
   };
   return document.addEventListener("keydown", y), m(s.target, t), s.autoplay && a.start(), {
@@ -458,7 +458,7 @@ function N(e) {
       l(), document.removeEventListener("keydown", y), a.destroy(), o.destroy();
     },
     setTheme: (i, c) => {
-      t = i, o.setTheme(S(i, c), i), f(s.storageKey, i), m(s.target, i);
+      t = i, o.setTheme(S(i, c), i), v(s.storageKey, i), m(s.target, i);
     },
     setSpeed: (i) => {
       a.setSpeed(i);
@@ -466,28 +466,57 @@ function N(e) {
   };
 }
 function H(e) {
-  var s;
+  var r;
   if (e.theme)
     return e.theme;
-  const t = w(e.storageKey);
+  const t = K(e.target);
+  if (t)
+    return t;
+  const s = w(e.storageKey);
   try {
-    const r = window.localStorage.getItem(t);
-    if (r === "github-light" || r === "github-dark")
-      return r;
+    const a = window.localStorage.getItem(s);
+    if (a === "github-light" || a === "github-dark")
+      return a;
   } catch {
   }
-  return (s = window.matchMedia) != null && s.call(window, "(prefers-color-scheme: light)").matches ? "github-light" : "github-dark";
+  return (r = window.matchMedia) != null && r.call(window, "(prefers-color-scheme: light)").matches ? "github-light" : "github-dark";
+}
+function K(e) {
+  if (typeof window > "u" || typeof document > "u")
+    return null;
+  const t = typeof e == "string" ? document.querySelector(e) : e, s = [
+    t,
+    (t == null ? void 0 : t.closest("[data-theme]")) ?? null,
+    document.documentElement,
+    document.body
+  ];
+  for (const a of s) {
+    if (!a)
+      continue;
+    const o = a.getAttribute("data-theme");
+    if (o === "light")
+      return "github-light";
+    if (o === "dark")
+      return "github-dark";
+    const n = Array.from(a.classList);
+    if (n.includes("light"))
+      return "github-light";
+    if (n.includes("dark"))
+      return "github-dark";
+  }
+  const r = getComputedStyle(document.documentElement).colorScheme;
+  return r.includes("light") ? "github-light" : r.includes("dark") ? "github-dark" : null;
 }
 function w(e) {
   return `${e ?? "github-snake-best-score"}-theme`;
 }
-function f(e, t) {
+function v(e, t) {
   try {
     window.localStorage.setItem(w(e), t);
   } catch {
   }
 }
-function K(e, t) {
+function G(e, t) {
   e.setTheme(S(t), t);
 }
 function m(e, t) {
@@ -498,7 +527,7 @@ function m(e, t) {
     })
   );
 }
-function G(e) {
+function I(e) {
   return {
     ArrowUp: { x: 0, y: -1 },
     ArrowDown: { x: 0, y: 1 },
@@ -514,19 +543,19 @@ function G(e) {
     D: { x: 1, y: 0 }
   }[e] ?? null;
 }
-function I(e) {
+function R(e) {
   try {
     return Number(window.localStorage.getItem(e) || 0);
   } catch {
     return 0;
   }
 }
-function R(e, t) {
+function N(e, t) {
   try {
     window.localStorage.setItem(e, String(t));
   } catch {
   }
 }
 export {
-  N as createGithubSnake
+  W as createGithubSnake
 };

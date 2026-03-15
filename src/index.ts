@@ -114,6 +114,11 @@ function resolveInitialTheme(options: GithubSnakeOptions): GithubSnakeThemeName 
     return options.theme;
   }
 
+  const hostTheme = detectHostTheme(options.target);
+  if (hostTheme) {
+    return hostTheme;
+  }
+
   const themeStorageKey = getThemeStorageKey(options.storageKey);
   try {
     const savedTheme = window.localStorage.getItem(themeStorageKey);
@@ -127,6 +132,58 @@ function resolveInitialTheme(options: GithubSnakeOptions): GithubSnakeThemeName 
   return window.matchMedia?.("(prefers-color-scheme: light)").matches
     ? "github-light"
     : "github-dark";
+}
+
+function detectHostTheme(target: GithubSnakeOptions["target"]): GithubSnakeThemeName | null {
+  if (typeof window === "undefined" || typeof document === "undefined") {
+    return null;
+  }
+
+  const resolvedTarget = typeof target === "string"
+    ? document.querySelector<HTMLElement>(target)
+    : target;
+
+  const candidates: Array<Element | null> = [
+    resolvedTarget,
+    resolvedTarget?.closest("[data-theme]") ?? null,
+    document.documentElement,
+    document.body,
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate) {
+      continue;
+    }
+
+    const datasetTheme = candidate.getAttribute("data-theme");
+    if (datasetTheme === "light") {
+      return "github-light";
+    }
+
+    if (datasetTheme === "dark") {
+      return "github-dark";
+    }
+
+    const classList = Array.from(candidate.classList);
+    if (classList.includes("light")) {
+      return "github-light";
+    }
+
+    if (classList.includes("dark")) {
+      return "github-dark";
+    }
+  }
+
+  const colorScheme = getComputedStyle(document.documentElement).colorScheme;
+  if (colorScheme.includes("light")) {
+    return "github-light";
+  }
+
+  if (colorScheme.includes("dark")) {
+    return "github-dark";
+  }
+
+  return null;
 }
 
 function getThemeStorageKey(storageKey?: string): string {
