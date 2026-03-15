@@ -1,0 +1,42 @@
+{
+  "name": "github-snake",
+  "version": "0.1.0",
+  "description": "Embeddable GitHub-style Snake contribution chart for websites.",
+  "type": "module",
+  "main": "./dist/github-snake.cjs",
+  "module": "./dist/github-snake.js",
+  "types": "./dist/types/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/src/index.d.ts",
+      "import": "./dist/github-snake.js",
+      "require": "./dist/github-snake.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=16.20.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc --emitDeclarationOnly --declaration --declarationDir dist/types",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "snake",
+    "github",
+    "contribution-graph",
+    "game",
+    "widget",
+    "library"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vite": "^4.5.5"
+  }
+}

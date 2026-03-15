@@ -1,0 +1,76 @@
+import type { GithubSnakeDifficultyConfig } from "./config";
+import { type Position } from "./board";
+import { type Direction } from "./snake";
+export type GameStatus = "idle" | "running" | "paused" | "over";
+export interface GithubSnakeCoreOptions {
+    rows: number;
+    cols: number;
+    baseSpeed: number;
+    bestScore?: number;
+    difficulty: GithubSnakeDifficultyConfig;
+}
+export interface GameSnapshot {
+    rows: number;
+    cols: number;
+    status: GameStatus;
+    snake: Position[];
+    previousSnake: Position[];
+    food: Position | null;
+    contributions: number[][];
+    score: number;
+    bestScore: number;
+    totalCommits: number;
+    flashKeys: Set<string>;
+    speed: number;
+    streak: number;
+    difficultyLevel: number;
+    statusMessage: string | null;
+}
+type Listener = (snapshot: GameSnapshot) => void;
+export declare class GithubSnakeCore {
+    private readonly rows;
+    private readonly cols;
+    private readonly difficulty;
+    private listeners;
+    private animationFrameId;
+    private lastTimestamp;
+    private accumulatedTime;
+    private flashes;
+    private baseSpeed;
+    private speed;
+    private status;
+    private score;
+    private bestScore;
+    private totalCommits;
+    private streak;
+    private difficultyLevel;
+    private snake;
+    private previousSnake;
+    private food;
+    private contributions;
+    private direction;
+    private queuedDirection;
+    private statusMessage;
+    private statusMessageTimeRemaining;
+    constructor(options: GithubSnakeCoreOptions);
+    subscribe(listener: Listener): () => void;
+    start(): void;
+    pause(): void;
+    restart(): void;
+    destroy(): void;
+    setSpeed(speed: number): void;
+    setDirection(direction: Direction): void;
+    setBestScore(bestScore: number): void;
+    getSnapshot(): GameSnapshot;
+    private resetState;
+    private readonly frame;
+    private step;
+    private collectFood;
+    private calculateSpeed;
+    private getDifficultyLevel;
+    private setStatusMessage;
+    private updateEffects;
+    private emit;
+    private snapshot;
+}
+export {};
