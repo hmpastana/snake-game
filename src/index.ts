@@ -74,11 +74,12 @@ export function createGithubSnake(options: GithubSnakeOptions): GithubSnakeInsta
       return;
     }
 
+    if (core.getSnapshot().status !== "running") {
+      return;
+    }
+
     event.preventDefault();
     core.setDirection(direction);
-    if (core.getSnapshot().status !== "running") {
-      core.start();
-    }
   };
 
   document.addEventListener("keydown", onKeyDown);

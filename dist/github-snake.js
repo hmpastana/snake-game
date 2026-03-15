@@ -452,7 +452,7 @@ function V(e) {
     o.render(i), i.bestScore !== r && (O(s.storageKey, i.bestScore), r = i.bestScore), i.score !== n && ((u = s.onScoreChange) == null || u.call(s, i.score, i.bestScore, i.totalCommits), n = i.score), h !== "over" && i.status === "over" && ((p = s.onGameOver) == null || p.call(s, i.score, i.totalCommits)), h = i.status;
   }), b = (i) => {
     const u = W(i.key);
-    u && (i.preventDefault(), a.setDirection(u), a.getSnapshot().status !== "running" && a.start());
+    u && a.getSnapshot().status === "running" && (i.preventDefault(), a.setDirection(u));
   };
   return document.addEventListener("keydown", b), y(s.target, t), s.autoplay && a.start(), {
     start: () => a.start(),
