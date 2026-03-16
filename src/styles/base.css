@@ -562,31 +562,25 @@
   }
 
   .gs-overlay {
-    place-items: start center;
-    padding: 1px 10px 10px;
+    padding: 8px;
   }
 
   .gs-overlay.is-over {
-    place-items: center;
-    padding: 10px;
+    padding: 8px;
   }
 
   .gs-overlay-card {
-    width: min(calc(100% - 12px), 14rem);
-    max-height: none;
-    padding: 8px 10px;
-    overflow: hidden;
+    width: min(100%, 24rem);
+    padding: 14px;
   }
 
   .gs-container .gs-overlay-card h4 {
-    margin-bottom: 6px;
-    font-size: 0.82rem;
-    line-height: 1.1;
+    font-size: 1rem;
   }
 
   .gs-container .gs-overlay-card p {
-    font-size: 0.66rem;
-    line-height: 1.2;
+    font-size: 0.82rem;
+    line-height: 1.4;
   }
 
   .gs-footer {
@@ -656,32 +650,30 @@
   }
 
   .gs-touch-row {
-    grid-template-columns: repeat(3, minmax(0, 56px));
+    grid-template-columns: repeat(3, minmax(0, 64px));
     gap: 8px;
   }
 
   .gs-touch-button {
-    width: 56px;
-    height: 48px;
+    width: 64px;
+    height: 54px;
     font-size: 1rem;
   }
 
   .gs-touch-up {
-    width: 62px;
+    width: 72px;
   }
 
   .gs-overlay-card {
-    width: min(calc(100% - 10px), 11.5rem);
-    padding: 6px 8px;
+    width: min(100%, 19rem);
   }
 
   .gs-container .gs-overlay-card h4 {
-    margin-bottom: 4px;
-    font-size: 0.74rem;
+    font-size: 0.88rem;
   }
 
   .gs-container .gs-overlay-card p {
-    font-size: 0.6rem;
-    line-height: 1.15;
+    font-size: 0.72rem;
+    line-height: 1.25;
   }
 }

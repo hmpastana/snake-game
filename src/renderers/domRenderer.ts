@@ -260,7 +260,6 @@ export class DomRenderer {
     this.overlayText.textContent = overlayState.text;
     this.overlay.classList.toggle("is-hidden", snapshot.status === "running");
     this.overlay.classList.toggle("is-over", snapshot.status === "over");
-    this.overlay.style.placeItems = snapshot.status === "over" ? "center" : "start center";
   }
 
   private updateBoardLayout(): void {
@@ -285,15 +284,17 @@ export class DomRenderer {
     const viewportHeight = this.config.rows === this.config.cols
       ? availableWidth
       : Math.max(240, Math.min(window.innerHeight * 0.68, 440));
-    const scale = availableWidth > 0 ? Math.min(availableWidth / fullWidth, 1) : 1;
+    const scale = availableWidth > 0 ? (availableWidth / fullWidth) : 1;
+    const scaledWidth = fullWidth * scale;
     const scaledHeight = fullHeight * scale;
+    const offsetX = Math.max(0, (availableWidth - scaledWidth) / 2);
     const offsetY = Math.max(0, (viewportHeight - scaledHeight) / 2);
 
     this.boardShell.classList.add("is-mobile-fit");
     this.boardFrame.style.setProperty("--gs-board-scale", String(scale));
     this.boardFrame.style.setProperty("--gs-board-width", `${fullWidth}px`);
     this.boardFrame.style.setProperty("--gs-board-height", `${fullHeight}px`);
-    this.boardFrame.style.setProperty("--gs-board-offset-x", "0px");
+    this.boardFrame.style.setProperty("--gs-board-offset-x", `${Math.floor(offsetX)}px`);
     this.boardFrame.style.setProperty("--gs-board-offset-y", `${Math.floor(offsetY)}px`);
     this.boardShell.style.setProperty("--gs-board-shell-height", `${Math.ceil(viewportHeight)}px`);
   }

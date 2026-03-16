@@ -121,7 +121,7 @@ function F(e, t, s) {
 function A(e, t, s) {
   return !F(e, t, s);
 }
-function H(e, t, s) {
+function $(e, t, s) {
   const a = s ? t : t.slice(0, -1), r = g(e);
   return a.some((i) => g(i) === r);
 }
@@ -134,7 +134,7 @@ function p(e, t, s) {
     }
   return r.length === 0 ? null : r[Math.floor(Math.random() * r.length)];
 }
-function $(e, t) {
+function H(e, t) {
   const s = Math.floor(t / 2), a = Math.floor(e / 2);
   return [
     { x: s, y: a },
@@ -203,12 +203,12 @@ class O {
     return this.snapshot();
   }
   resetState() {
-    this.snake = $(this.rows, this.cols), this.previousSnake = m(this.snake), this.direction = { x: 1, y: 0 }, this.queuedDirection = { x: 1, y: 0 }, this.food = p(this.rows, this.cols, this.snake), this.score = 0, this.totalCommits = 0, this.streak = 0, this.difficultyLevel = 0, this.accumulatedTime = 0, this.lastTimestamp = 0, this.speed = this.baseSpeed, this.status = "idle", this.contributions = C(this.rows, this.cols), this.flashes.clear(), this.statusMessage = null, this.statusMessageTimeRemaining = 0;
+    this.snake = H(this.rows, this.cols), this.previousSnake = m(this.snake), this.direction = { x: 1, y: 0 }, this.queuedDirection = { x: 1, y: 0 }, this.food = p(this.rows, this.cols, this.snake), this.score = 0, this.totalCommits = 0, this.streak = 0, this.difficultyLevel = 0, this.accumulatedTime = 0, this.lastTimestamp = 0, this.speed = this.baseSpeed, this.status = "idle", this.contributions = C(this.rows, this.cols), this.flashes.clear(), this.statusMessage = null, this.statusMessageTimeRemaining = 0;
   }
   step() {
     this.previousSnake = m(this.snake), v(this.direction, this.queuedDirection) || (this.direction = { ...this.queuedDirection });
     const t = q(this.snake[0], this.direction), s = !!this.food && t.x === this.food.x && t.y === this.food.y;
-    if (A(t, this.rows, this.cols) || H(t, this.snake, s)) {
+    if (A(t, this.rows, this.cols) || $(t, this.snake, s)) {
       this.status = "over";
       return;
     }
@@ -347,14 +347,14 @@ class R {
   }
   updateOverlay(t) {
     const s = _(t.status, t.totalCommits);
-    this.overlayTitle.textContent = s.title, this.overlayText.textContent = s.text, this.overlay.classList.toggle("is-hidden", t.status === "running"), this.overlay.classList.toggle("is-over", t.status === "over"), this.overlay.style.placeItems = t.status === "over" ? "center" : "start center";
+    this.overlayTitle.textContent = s.title, this.overlayText.textContent = s.text, this.overlay.classList.toggle("is-hidden", t.status === "running"), this.overlay.classList.toggle("is-over", t.status === "over");
   }
   updateBoardLayout() {
     const t = this.config.cols * this.config.cellSize + (this.config.cols - 1) * this.config.gapSize, s = this.config.rows * this.config.cellSize + (this.config.rows - 1) * this.config.gapSize, a = window.matchMedia("(max-width: 720px)").matches;
     if (this.boardFrame.style.removeProperty("--gs-board-scale"), this.boardFrame.style.removeProperty("--gs-board-width"), this.boardFrame.style.removeProperty("--gs-board-height"), this.boardFrame.style.removeProperty("--gs-board-offset-x"), this.boardFrame.style.removeProperty("--gs-board-offset-y"), this.boardFrame.style.removeProperty("--gs-board-scale"), this.boardShell.style.removeProperty("--gs-board-shell-height"), this.boardShell.classList.remove("is-mobile-fit"), !a)
       return;
-    const r = this.boardShell.clientWidth, i = this.config.rows === this.config.cols ? r : Math.max(240, Math.min(window.innerHeight * 0.68, 440)), n = r > 0 ? Math.min(r / t, 1) : 1, h = s * n, l = Math.max(0, (i - h) / 2);
-    this.boardShell.classList.add("is-mobile-fit"), this.boardFrame.style.setProperty("--gs-board-scale", String(n)), this.boardFrame.style.setProperty("--gs-board-width", `${t}px`), this.boardFrame.style.setProperty("--gs-board-height", `${s}px`), this.boardFrame.style.setProperty("--gs-board-offset-x", "0px"), this.boardFrame.style.setProperty("--gs-board-offset-y", `${Math.floor(l)}px`), this.boardShell.style.setProperty("--gs-board-shell-height", `${Math.ceil(i)}px`);
+    const r = this.boardShell.clientWidth, i = this.config.rows === this.config.cols ? r : Math.max(240, Math.min(window.innerHeight * 0.68, 440)), n = r > 0 ? r / t : 1, h = t * n, l = s * n, u = Math.max(0, (r - h) / 2), o = Math.max(0, (i - l) / 2);
+    this.boardShell.classList.add("is-mobile-fit"), this.boardFrame.style.setProperty("--gs-board-scale", String(n)), this.boardFrame.style.setProperty("--gs-board-width", `${t}px`), this.boardFrame.style.setProperty("--gs-board-height", `${s}px`), this.boardFrame.style.setProperty("--gs-board-offset-x", `${Math.floor(u)}px`), this.boardFrame.style.setProperty("--gs-board-offset-y", `${Math.floor(o)}px`), this.boardShell.style.setProperty("--gs-board-shell-height", `${Math.ceil(i)}px`);
   }
   bindPress(t, s) {
     let a = !1;
@@ -497,7 +497,7 @@ function _(e, t) {
       };
   }
 }
-function V(e) {
+function X(e) {
   let t = K(e);
   const s = T({
     ...e,
@@ -521,14 +521,14 @@ function V(e) {
       r.getSnapshot().status === "running" && r.setDirection(o);
     },
     onThemeChange: (o) => {
-      t = o, U(i, o), b(i, s.target), S(s.storageKey, o), y(s.target, o);
+      t = o, z(i, o), b(i, s.target), S(s.storageKey, o), y(s.target, o);
     }
   });
   const l = r.subscribe((o) => {
     var c, f;
     i.render(o), o.bestScore !== a && (Y(s.storageKey, o.bestScore), a = o.bestScore), o.score !== n && ((c = s.onScoreChange) == null || c.call(s, o.score, o.bestScore, o.totalCommits), n = o.score), h !== "over" && o.status === "over" && ((f = s.onGameOver) == null || f.call(s, o.score, o.totalCommits)), h = o.status;
   }), u = (o) => {
-    const c = G(o.key);
+    const c = I(o.key);
     c && r.getSnapshot().status === "running" && (o.preventDefault(), r.setDirection(c));
   };
   return document.addEventListener("keydown", u), y(s.target, t), s.autoplay && r.start(), {
@@ -547,13 +547,13 @@ function V(e) {
   };
 }
 function b(e, t) {
-  e.setHostAppearance(W(t));
+  e.setHostAppearance(U(t));
 }
 function K(e) {
   var a;
   if (e.theme)
     return e.theme;
-  const t = z(e.target);
+  const t = W(e.target);
   if (t)
     return t;
   const s = x(e.storageKey);
@@ -565,7 +565,7 @@ function K(e) {
   }
   return (a = window.matchMedia) != null && a.call(window, "(prefers-color-scheme: light)").matches ? "github-light" : "github-dark";
 }
-function z(e) {
+function W(e) {
   if (typeof window > "u" || typeof document > "u")
     return null;
   const t = typeof e == "string" ? document.querySelector(e) : e, s = [
@@ -600,16 +600,16 @@ function S(e, t) {
   } catch {
   }
 }
-function U(e, t) {
+function z(e, t) {
   e.setTheme(k(t), t);
 }
-function W(e) {
+function U(e) {
   const s = getComputedStyle(e).fontFamily || getComputedStyle(document.body).fontFamily;
   return {
-    fontFamily: I(s) ? s : void 0
+    fontFamily: G(s) ? s : void 0
   };
 }
-function I(e) {
+function G(e) {
   const t = e.trim().toLowerCase();
   return !(!t || t === "serif" || t === "sans-serif" || t === "monospace" || t.includes("times new roman"));
 }
@@ -621,7 +621,7 @@ function y(e, t) {
     })
   );
 }
-function G(e) {
+function I(e) {
   return {
     ArrowUp: { x: 0, y: -1 },
     ArrowDown: { x: 0, y: 1 },
@@ -651,5 +651,5 @@ function Y(e, t) {
   }
 }
 export {
-  V as createGithubSnake
+  X as createGithubSnake
 };
