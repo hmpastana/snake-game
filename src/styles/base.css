@@ -406,6 +406,7 @@
   justify-items: center;
   gap: 8px;
   touch-action: none;
+  width: 100%;
 }
 
 .gs-touch-row {
@@ -655,16 +656,18 @@
   }
 
   .gs-touch-row {
-    grid-template-columns: repeat(3, minmax(0, 64px));
+    grid-template-columns: repeat(3, minmax(0, 56px));
+    gap: 8px;
   }
 
   .gs-touch-button {
-    width: 64px;
-    height: 54px;
+    width: 56px;
+    height: 48px;
+    font-size: 1rem;
   }
 
   .gs-touch-up {
-    width: 72px;
+    width: 62px;
   }
 
   .gs-overlay-card {

@@ -260,6 +260,7 @@ export class DomRenderer {
     this.overlayText.textContent = overlayState.text;
     this.overlay.classList.toggle("is-hidden", snapshot.status === "running");
     this.overlay.classList.toggle("is-over", snapshot.status === "over");
+    this.overlay.style.placeItems = snapshot.status === "over" ? "center" : "start center";
   }
 
   private updateBoardLayout(): void {

@@ -183,7 +183,7 @@ function shouldUseMobileBoard(): boolean {
     return false;
   }
 
-  return window.matchMedia("(max-width: 720px)").matches;
+  return window.matchMedia("(max-width: 720px) and (pointer: coarse)").matches;
 }
 
 export function resolveTarget(target: string | HTMLElement): HTMLElement {

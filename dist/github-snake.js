@@ -76,7 +76,7 @@ function L(e, t) {
   return t && (e === void 0 || e === 53) ? 20 : d(e, 53, 12);
 }
 function M() {
-  return typeof window > "u" ? !1 : window.matchMedia("(max-width: 720px)").matches;
+  return typeof window > "u" ? !1 : window.matchMedia("(max-width: 720px) and (pointer: coarse)").matches;
 }
 function B(e) {
   if (typeof e != "string")
@@ -347,7 +347,7 @@ class R {
   }
   updateOverlay(t) {
     const s = _(t.status, t.totalCommits);
-    this.overlayTitle.textContent = s.title, this.overlayText.textContent = s.text, this.overlay.classList.toggle("is-hidden", t.status === "running");
+    this.overlayTitle.textContent = s.title, this.overlayText.textContent = s.text, this.overlay.classList.toggle("is-hidden", t.status === "running"), this.overlay.classList.toggle("is-over", t.status === "over"), this.overlay.style.placeItems = t.status === "over" ? "center" : "start center";
   }
   updateBoardLayout() {
     const t = this.config.cols * this.config.cellSize + (this.config.cols - 1) * this.config.gapSize, s = this.config.rows * this.config.cellSize + (this.config.rows - 1) * this.config.gapSize, a = window.matchMedia("(max-width: 720px)").matches;
@@ -528,7 +528,7 @@ function V(e) {
     var c, f;
     i.render(o), o.bestScore !== a && (Y(s.storageKey, o.bestScore), a = o.bestScore), o.score !== n && ((c = s.onScoreChange) == null || c.call(s, o.score, o.bestScore, o.totalCommits), n = o.score), h !== "over" && o.status === "over" && ((f = s.onGameOver) == null || f.call(s, o.score, o.totalCommits)), h = o.status;
   }), u = (o) => {
-    const c = I(o.key);
+    const c = G(o.key);
     c && r.getSnapshot().status === "running" && (o.preventDefault(), r.setDirection(c));
   };
   return document.addEventListener("keydown", u), y(s.target, t), s.autoplay && r.start(), {
@@ -606,10 +606,10 @@ function U(e, t) {
 function W(e) {
   const s = getComputedStyle(e).fontFamily || getComputedStyle(document.body).fontFamily;
   return {
-    fontFamily: G(s) ? s : void 0
+    fontFamily: I(s) ? s : void 0
   };
 }
-function G(e) {
+function I(e) {
   const t = e.trim().toLowerCase();
   return !(!t || t === "serif" || t === "sans-serif" || t === "monospace" || t.includes("times new roman"));
 }
@@ -621,7 +621,7 @@ function y(e, t) {
     })
   );
 }
-function I(e) {
+function G(e) {
   return {
     ArrowUp: { x: 0, y: -1 },
     ArrowDown: { x: 0, y: 1 },
