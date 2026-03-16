@@ -1,5 +1,10 @@
 export type GithubSnakeThemeName = "github-dark" | "github-light";
 
+const DEFAULT_DESKTOP_ROWS = 7;
+const DEFAULT_DESKTOP_COLS = 53;
+const DEFAULT_MOBILE_ROWS = 20;
+const DEFAULT_MOBILE_COLS = 20;
+
 export interface GithubSnakeColors {
   pageBackground: string;
   chartBackground: string;
@@ -126,6 +131,9 @@ export function resolveConfig(options: GithubSnakeOptions): ResolvedGithubSnakeC
   const target = resolveTarget(options.target);
   const theme = options.theme ?? "github-dark";
   const baseSpeed = clampNumber(options.speed, 170, 40);
+  const isMobileViewport = shouldUseMobileBoard();
+  const rows = resolveBoardRows(options.rows, isMobileViewport);
+  const cols = resolveBoardCols(options.cols, isMobileViewport);
   const colors = {
     ...BUILT_IN_THEMES[theme],
     ...options.customColors,
@@ -133,8 +141,8 @@ export function resolveConfig(options: GithubSnakeOptions): ResolvedGithubSnakeC
 
   return {
     target,
-    rows: clampNumber(options.rows, 7, 4),
-    cols: clampNumber(options.cols, 53, 12),
+    rows,
+    cols,
     cellSize: clampNumber(options.cellSize, 14, 8),
     gapSize: clampNumber(options.gapSize, 3, 1),
     theme,
@@ -152,6 +160,30 @@ export function resolveConfig(options: GithubSnakeOptions): ResolvedGithubSnakeC
     onGameOver: options.onGameOver,
     difficulty: resolveDifficultyConfig(baseSpeed, options.difficulty),
   };
+}
+
+function resolveBoardRows(rows: number | undefined, isMobileViewport: boolean): number {
+  if (isMobileViewport && (rows === undefined || rows === DEFAULT_DESKTOP_ROWS)) {
+    return DEFAULT_MOBILE_ROWS;
+  }
+
+  return clampNumber(rows, DEFAULT_DESKTOP_ROWS, 4);
+}
+
+function resolveBoardCols(cols: number | undefined, isMobileViewport: boolean): number {
+  if (isMobileViewport && (cols === undefined || cols === DEFAULT_DESKTOP_COLS)) {
+    return DEFAULT_MOBILE_COLS;
+  }
+
+  return clampNumber(cols, DEFAULT_DESKTOP_COLS, 12);
+}
+
+function shouldUseMobileBoard(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return window.matchMedia("(max-width: 720px)").matches;
 }
 
 export function resolveTarget(target: string | HTMLElement): HTMLElement {

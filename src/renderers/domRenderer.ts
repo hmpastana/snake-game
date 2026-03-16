@@ -17,6 +17,7 @@ export class DomRenderer {
   private readonly bestScoreValue: HTMLElement;
   private readonly totalCommitsValue: HTMLElement;
   private readonly boardShell: HTMLDivElement;
+  private readonly boardFrame: HTMLDivElement;
   private readonly boardElement: HTMLDivElement;
   private readonly overlay: HTMLDivElement;
   private readonly overlayTitle: HTMLElement;
@@ -30,8 +31,12 @@ export class DomRenderer {
   private readonly touchLeftButton: HTMLButtonElement;
   private readonly touchDownButton: HTMLButtonElement;
   private readonly touchRightButton: HTMLButtonElement;
+  private readonly touchControls: HTMLDivElement;
   private readonly cells = new Map<string, HTMLDivElement>();
   private currentTheme: GithubSnakeThemeName;
+  private readonly handleResize = (): void => {
+    this.updateBoardLayout();
+  };
 
   constructor(config: ResolvedGithubSnakeConfig) {
     this.config = config;
@@ -47,6 +52,7 @@ export class DomRenderer {
     this.bestScoreValue = this.requireElement("[data-gs-best-score]");
     this.totalCommitsValue = this.requireElement("[data-gs-total-commits]");
     this.boardShell = this.requireElement("[data-gs-board-shell]");
+    this.boardFrame = this.requireElement("[data-gs-board-frame]");
     this.boardElement = this.requireElement("[data-gs-board]");
     this.overlay = this.requireElement("[data-gs-overlay]");
     this.overlayTitle = this.requireElement("[data-gs-overlay-title]");
@@ -60,6 +66,7 @@ export class DomRenderer {
     this.touchLeftButton = this.requireElement("[data-gs-touch-left]");
     this.touchDownButton = this.requireElement("[data-gs-touch-down]");
     this.touchRightButton = this.requireElement("[data-gs-touch-right]");
+    this.touchControls = this.requireElement("[data-gs-touch-controls]");
 
     this.boardElement.style.setProperty("--gs-cols", String(config.cols));
     this.boardElement.style.setProperty("--gs-cell-size", `${config.cellSize}px`);
@@ -67,10 +74,12 @@ export class DomRenderer {
 
     this.createCells();
     this.updateThemeButtons();
+    this.updateBoardLayout();
+    window.addEventListener("resize", this.handleResize);
   }
 
   bindControls(controls: RendererControls): void {
-    this.primaryButton.addEventListener("click", () => {
+    this.bindPress(this.primaryButton, () => {
       if (this.primaryButton.dataset.state === "pause") {
         controls.onPause();
         return;
@@ -79,16 +88,17 @@ export class DomRenderer {
       controls.onStart();
     });
 
-    this.restartButton.addEventListener("click", controls.onRestart);
-    this.lightThemeButton.addEventListener("click", () => controls.onThemeChange("github-light"));
-    this.darkThemeButton.addEventListener("click", () => controls.onThemeChange("github-dark"));
-    this.touchUpButton.addEventListener("click", () => controls.onDirection({ x: 0, y: -1 }));
-    this.touchLeftButton.addEventListener("click", () => controls.onDirection({ x: -1, y: 0 }));
-    this.touchDownButton.addEventListener("click", () => controls.onDirection({ x: 0, y: 1 }));
-    this.touchRightButton.addEventListener("click", () => controls.onDirection({ x: 1, y: 0 }));
+    this.bindPress(this.restartButton, controls.onRestart);
+    this.bindPress(this.lightThemeButton, () => controls.onThemeChange("github-light"));
+    this.bindPress(this.darkThemeButton, () => controls.onThemeChange("github-dark"));
+    this.bindPress(this.touchUpButton, () => controls.onDirection({ x: 0, y: -1 }));
+    this.bindPress(this.touchLeftButton, () => controls.onDirection({ x: -1, y: 0 }));
+    this.bindPress(this.touchDownButton, () => controls.onDirection({ x: 0, y: 1 }));
+    this.bindPress(this.touchRightButton, () => controls.onDirection({ x: 1, y: 0 }));
 
     let touchStartX = 0;
     let touchStartY = 0;
+    let gestureTriggered = false;
 
     this.boardShell.addEventListener("touchstart", (event) => {
       const touch = event.changedTouches[0];
@@ -98,7 +108,39 @@ export class DomRenderer {
 
       touchStartX = touch.clientX;
       touchStartY = touch.clientY;
+      gestureTriggered = false;
     }, { passive: true });
+
+    this.boardShell.addEventListener("touchmove", (event) => {
+      const touch = event.changedTouches[0];
+      if (!touch) {
+        return;
+      }
+
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+
+      if (Math.max(absX, absY) < 14) {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (gestureTriggered) {
+        return;
+      }
+
+      gestureTriggered = true;
+
+      if (absX > absY) {
+        controls.onDirection(deltaX > 0 ? { x: 1, y: 0 } : { x: -1, y: 0 });
+        return;
+      }
+
+      controls.onDirection(deltaY > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 });
+    }, { passive: false });
 
     this.boardShell.addEventListener("touchend", (event) => {
       const touch = event.changedTouches[0];
@@ -111,6 +153,10 @@ export class DomRenderer {
       const absX = Math.abs(deltaX);
       const absY = Math.abs(deltaY);
 
+      if (gestureTriggered) {
+        return;
+      }
+
       if (Math.max(absX, absY) < 18) {
         return;
       }
@@ -122,6 +168,14 @@ export class DomRenderer {
 
       controls.onDirection(deltaY > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 });
     }, { passive: true });
+
+    this.boardShell.addEventListener("touchmove", (event) => {
+      event.preventDefault();
+    }, { passive: false });
+
+    this.touchControls.addEventListener("touchmove", (event) => {
+      event.preventDefault();
+    }, { passive: false });
   }
 
   render(snapshot: GameSnapshot): void {
@@ -173,6 +227,7 @@ export class DomRenderer {
   }
 
   destroy(): void {
+    window.removeEventListener("resize", this.handleResize);
     this.root.remove();
   }
 
@@ -204,6 +259,68 @@ export class DomRenderer {
     this.overlayTitle.textContent = overlayState.title;
     this.overlayText.textContent = overlayState.text;
     this.overlay.classList.toggle("is-hidden", snapshot.status === "running");
+    this.overlay.classList.toggle("is-over", snapshot.status === "over");
+  }
+
+  private updateBoardLayout(): void {
+    const fullWidth = (this.config.cols * this.config.cellSize) + ((this.config.cols - 1) * this.config.gapSize);
+    const fullHeight = (this.config.rows * this.config.cellSize) + ((this.config.rows - 1) * this.config.gapSize);
+    const isMobile = window.matchMedia("(max-width: 720px)").matches;
+
+    this.boardFrame.style.removeProperty("--gs-board-scale");
+    this.boardFrame.style.removeProperty("--gs-board-width");
+    this.boardFrame.style.removeProperty("--gs-board-height");
+    this.boardFrame.style.removeProperty("--gs-board-offset-x");
+    this.boardFrame.style.removeProperty("--gs-board-offset-y");
+    this.boardFrame.style.removeProperty("--gs-board-scale");
+    this.boardShell.style.removeProperty("--gs-board-shell-height");
+    this.boardShell.classList.remove("is-mobile-fit");
+
+    if (!isMobile) {
+      return;
+    }
+
+    const availableWidth = this.boardShell.clientWidth;
+    const viewportHeight = this.config.rows === this.config.cols
+      ? availableWidth
+      : Math.max(240, Math.min(window.innerHeight * 0.68, 440));
+    const scale = availableWidth > 0 ? Math.min(availableWidth / fullWidth, 1) : 1;
+    const scaledHeight = fullHeight * scale;
+    const offsetY = Math.max(0, (viewportHeight - scaledHeight) / 2);
+
+    this.boardShell.classList.add("is-mobile-fit");
+    this.boardFrame.style.setProperty("--gs-board-scale", String(scale));
+    this.boardFrame.style.setProperty("--gs-board-width", `${fullWidth}px`);
+    this.boardFrame.style.setProperty("--gs-board-height", `${fullHeight}px`);
+    this.boardFrame.style.setProperty("--gs-board-offset-x", "0px");
+    this.boardFrame.style.setProperty("--gs-board-offset-y", `${Math.floor(offsetY)}px`);
+    this.boardShell.style.setProperty("--gs-board-shell-height", `${Math.ceil(viewportHeight)}px`);
+  }
+
+  private bindPress(element: HTMLElement, action: () => void): void {
+    let ignoreClick = false;
+
+    element.addEventListener("pointerdown", (event) => {
+      if (event.pointerType === "mouse" && event.button !== 0) {
+        return;
+      }
+
+      event.preventDefault();
+      ignoreClick = true;
+      action();
+      window.setTimeout(() => {
+        ignoreClick = false;
+      }, 350);
+    });
+
+    element.addEventListener("click", (event) => {
+      if (ignoreClick) {
+        event.preventDefault();
+        return;
+      }
+
+      action();
+    });
   }
 
   private applyTheme(colors: GithubSnakeColors): void {
@@ -278,13 +395,13 @@ export class DomRenderer {
             <div class="gs-months" aria-hidden="${String(!this.config.showMonthLabels)}">${monthLabels}</div>
             <div class="gs-weekdays" aria-hidden="${String(!this.config.showWeekdayLabels)}">${weekdayLabels}</div>
             <div class="gs-board-shell" data-gs-board-shell>
-              <div class="gs-board-frame">
+              <div class="gs-board-frame" data-gs-board-frame>
                 <div class="gs-board" data-gs-board></div>
-                <div class="gs-overlay" data-gs-overlay>
-                  <div class="gs-overlay-card">
-                    <h4 data-gs-overlay-title>Press Start</h4>
-                    <p data-gs-overlay-text>Use arrow keys or WASD to steer through the contribution chart.</p>
-                  </div>
+              </div>
+              <div class="gs-overlay" data-gs-overlay>
+                <div class="gs-overlay-card">
+                  <h4 data-gs-overlay-title>Press Start</h4>
+                  <p data-gs-overlay-text>Use arrow keys or WASD to steer through the contribution chart.</p>
                 </div>
               </div>
             </div>
@@ -311,7 +428,7 @@ export class DomRenderer {
             </div>
           </footer>
 
-          <div class="gs-touch-controls" aria-label="Touch controls">
+          <div class="gs-touch-controls" aria-label="Touch controls" data-gs-touch-controls>
             <button class="gs-touch-button gs-touch-up" type="button" data-gs-touch-up aria-label="Move up">↑</button>
             <div class="gs-touch-row">
               <button class="gs-touch-button" type="button" data-gs-touch-left aria-label="Move left">←</button>

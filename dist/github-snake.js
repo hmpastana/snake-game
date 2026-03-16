@@ -1,4 +1,4 @@
-const S = {
+const w = {
   "github-dark": {
     pageBackground: "#0D1117",
     chartBackground: "#161B22",
@@ -43,19 +43,19 @@ const S = {
   }
 };
 function T(e) {
-  const t = E(e.target), s = e.theme ?? "github-dark", i = d(e.speed, 170, 40), a = {
-    ...S[s],
+  const t = B(e.target), s = e.theme ?? "github-dark", a = d(e.speed, 170, 40), r = M(), i = E(e.rows, r), n = L(e.cols, r), h = {
+    ...w[s],
     ...e.customColors
   };
   return {
     target: t,
-    rows: d(e.rows, 7, 4),
-    cols: d(e.cols, 53, 12),
+    rows: i,
+    cols: n,
     cellSize: d(e.cellSize, 14, 8),
     gapSize: d(e.gapSize, 3, 1),
     theme: s,
-    colors: a,
-    speed: i,
+    colors: h,
+    speed: a,
     showLegend: e.showLegend ?? !0,
     showMonthLabels: e.showMonthLabels ?? !0,
     showWeekdayLabels: e.showWeekdayLabels ?? !0,
@@ -66,10 +66,19 @@ function T(e) {
     storageKey: e.storageKey ?? "github-snake-best-score",
     onScoreChange: e.onScoreChange,
     onGameOver: e.onGameOver,
-    difficulty: B(i, e.difficulty)
+    difficulty: D(a, e.difficulty)
   };
 }
-function E(e) {
+function E(e, t) {
+  return t && (e === void 0 || e === 7) ? 20 : d(e, 7, 4);
+}
+function L(e, t) {
+  return t && (e === void 0 || e === 53) ? 20 : d(e, 53, 12);
+}
+function M() {
+  return typeof window > "u" ? !1 : window.matchMedia("(max-width: 720px)").matches;
+}
+function B(e) {
   if (typeof e != "string")
     return e;
   const t = document.querySelector(e);
@@ -77,16 +86,16 @@ function E(e) {
     throw new Error(`GitHub Snake could not find target element: ${e}`);
   return t;
 }
-function w(e, t) {
+function k(e, t) {
   return {
-    ...S[e],
+    ...w[e],
     ...t
   };
 }
 function d(e, t, s) {
   return typeof e != "number" || Number.isNaN(e) ? t : Math.max(s, Math.floor(e));
 }
-function B(e, t) {
+function D(e, t) {
   return {
     thresholds: (t == null ? void 0 : t.thresholds) ?? [10, 20, 35, 50],
     speedStep: (t == null ? void 0 : t.speedStep) ?? 16,
@@ -100,43 +109,43 @@ function B(e, t) {
 function C(e, t) {
   return Array.from({ length: e }, () => Array(t).fill(0));
 }
-function M(e) {
+function P(e) {
   return e.map((t) => [...t]);
 }
 function g(e) {
   return `${e.x},${e.y}`;
 }
-function L(e, t, s) {
+function F(e, t, s) {
   return e.x >= 0 && e.y >= 0 && e.x < s && e.y < t;
 }
-function D(e, t, s) {
-  return !L(e, t, s);
+function A(e, t, s) {
+  return !F(e, t, s);
 }
-function F(e, t, s) {
-  const i = s ? t : t.slice(0, -1), a = g(e);
-  return i.some((r) => g(r) === a);
+function H(e, t, s) {
+  const a = s ? t : t.slice(0, -1), r = g(e);
+  return a.some((i) => g(i) === r);
 }
-function f(e, t, s) {
-  const i = new Set(s.map(g)), a = [];
-  for (let r = 0; r < e; r += 1)
+function p(e, t, s) {
+  const a = new Set(s.map(g)), r = [];
+  for (let i = 0; i < e; i += 1)
     for (let n = 0; n < t; n += 1) {
-      const h = { x: n, y: r };
-      i.has(g(h)) || a.push(h);
+      const h = { x: n, y: i };
+      a.has(g(h)) || r.push(h);
     }
-  return a.length === 0 ? null : a[Math.floor(Math.random() * a.length)];
+  return r.length === 0 ? null : r[Math.floor(Math.random() * r.length)];
 }
-function A(e, t) {
-  const s = Math.floor(t / 2), i = Math.floor(e / 2);
+function $(e, t) {
+  const s = Math.floor(t / 2), a = Math.floor(e / 2);
   return [
-    { x: s, y: i },
-    { x: s - 1, y: i },
-    { x: s - 2, y: i }
+    { x: s, y: a },
+    { x: s - 1, y: a },
+    { x: s - 2, y: a }
   ];
 }
 function m(e) {
   return e.map((t) => ({ ...t }));
 }
-function P(e, t) {
+function q(e, t) {
   return {
     x: e.x + t.x,
     y: e.y + t.y
@@ -145,19 +154,19 @@ function P(e, t) {
 function v(e, t) {
   return e.x === -t.x && e.y === -t.y;
 }
-class q {
+class O {
   constructor(t) {
     this.listeners = /* @__PURE__ */ new Set(), this.animationFrameId = 0, this.lastTimestamp = 0, this.accumulatedTime = 0, this.flashes = /* @__PURE__ */ new Map(), this.status = "idle", this.score = 0, this.bestScore = 0, this.totalCommits = 0, this.streak = 0, this.difficultyLevel = 0, this.snake = [], this.previousSnake = [], this.food = null, this.contributions = [], this.direction = { x: 1, y: 0 }, this.queuedDirection = { x: 1, y: 0 }, this.statusMessage = null, this.statusMessageTimeRemaining = 0, this.frame = (s) => {
       this.lastTimestamp || (this.lastTimestamp = s);
-      const i = Math.min(32, s - this.lastTimestamp);
+      const a = Math.min(32, s - this.lastTimestamp);
       if (this.lastTimestamp = s, this.status === "running") {
-        for (this.accumulatedTime += i; this.accumulatedTime >= this.speed; )
+        for (this.accumulatedTime += a; this.accumulatedTime >= this.speed; )
           if (this.accumulatedTime -= this.speed, this.step(), this.status !== "running") {
             this.accumulatedTime = 0;
             break;
           }
       }
-      this.updateEffects(i), this.emit(), this.animationFrameId = window.requestAnimationFrame(this.frame);
+      this.updateEffects(a), this.emit(), this.animationFrameId = window.requestAnimationFrame(this.frame);
     }, this.rows = t.rows, this.cols = t.cols, this.difficulty = t.difficulty, this.baseSpeed = t.baseSpeed, this.speed = t.baseSpeed, this.bestScore = t.bestScore ?? 0, this.resetState(), this.emit(), this.animationFrameId = window.requestAnimationFrame(this.frame);
   }
   subscribe(t) {
@@ -194,12 +203,12 @@ class q {
     return this.snapshot();
   }
   resetState() {
-    this.snake = A(this.rows, this.cols), this.previousSnake = m(this.snake), this.direction = { x: 1, y: 0 }, this.queuedDirection = { x: 1, y: 0 }, this.food = f(this.rows, this.cols, this.snake), this.score = 0, this.totalCommits = 0, this.streak = 0, this.difficultyLevel = 0, this.accumulatedTime = 0, this.lastTimestamp = 0, this.speed = this.baseSpeed, this.status = "idle", this.contributions = C(this.rows, this.cols), this.flashes.clear(), this.statusMessage = null, this.statusMessageTimeRemaining = 0;
+    this.snake = $(this.rows, this.cols), this.previousSnake = m(this.snake), this.direction = { x: 1, y: 0 }, this.queuedDirection = { x: 1, y: 0 }, this.food = p(this.rows, this.cols, this.snake), this.score = 0, this.totalCommits = 0, this.streak = 0, this.difficultyLevel = 0, this.accumulatedTime = 0, this.lastTimestamp = 0, this.speed = this.baseSpeed, this.status = "idle", this.contributions = C(this.rows, this.cols), this.flashes.clear(), this.statusMessage = null, this.statusMessageTimeRemaining = 0;
   }
   step() {
     this.previousSnake = m(this.snake), v(this.direction, this.queuedDirection) || (this.direction = { ...this.queuedDirection });
-    const t = P(this.snake[0], this.direction), s = !!this.food && t.x === this.food.x && t.y === this.food.y;
-    if (D(t, this.rows, this.cols) || F(t, this.snake, s)) {
+    const t = q(this.snake[0], this.direction), s = !!this.food && t.x === this.food.x && t.y === this.food.y;
+    if (A(t, this.rows, this.cols) || H(t, this.snake, s)) {
       this.status = "over";
       return;
     }
@@ -212,22 +221,22 @@ class q {
   collectFood(t) {
     this.score += 1, this.totalCommits += 1, this.streak += 1, this.contributions[t.y][t.x] = Math.min(4, this.contributions[t.y][t.x] + 1), this.flashes.set(g(t), 260), this.bestScore = Math.max(this.bestScore, this.score);
     const s = this.getDifficultyLevel(this.score);
-    s > this.difficultyLevel && (this.difficultyLevel = s, this.setStatusMessage(this.difficultyLevel === 1 ? "Velocity increased" : "Level up")), this.difficulty.streakBonusEnabled && this.streak > 0 && this.streak % this.difficulty.streakBonusEvery === 0 && (this.score += this.difficulty.streakBonusAmount, this.bestScore = Math.max(this.bestScore, this.score), this.setStatusMessage("Commit streak bonus")), this.speed = this.calculateSpeed(), this.food = f(this.rows, this.cols, this.snake), this.food || (this.status = "over");
+    s > this.difficultyLevel && (this.difficultyLevel = s, this.setStatusMessage(this.difficultyLevel === 1 ? "Velocity increased" : "Level up")), this.difficulty.streakBonusEnabled && this.streak > 0 && this.streak % this.difficulty.streakBonusEvery === 0 && (this.score += this.difficulty.streakBonusAmount, this.bestScore = Math.max(this.bestScore, this.score), this.setStatusMessage("Commit streak bonus")), this.speed = this.calculateSpeed(), this.food = p(this.rows, this.cols, this.snake), this.food || (this.status = "over");
   }
   calculateSpeed() {
     const t = this.getDifficultyLevel(this.score);
     return Math.max(this.difficulty.maxSpeed, this.baseSpeed - t * this.difficulty.speedStep);
   }
   getDifficultyLevel(t) {
-    return this.difficulty.thresholds.reduce((s, i) => t >= i ? s + 1 : s, 0);
+    return this.difficulty.thresholds.reduce((s, a) => t >= a ? s + 1 : s, 0);
   }
   setStatusMessage(t) {
     this.statusMessage = t, this.statusMessageTimeRemaining = this.difficulty.statusMessageDuration;
   }
   updateEffects(t) {
-    for (const [s, i] of this.flashes.entries()) {
-      const a = i - t;
-      a <= 0 ? this.flashes.delete(s) : this.flashes.set(s, a);
+    for (const [s, a] of this.flashes.entries()) {
+      const r = a - t;
+      r <= 0 ? this.flashes.delete(s) : this.flashes.set(s, r);
     }
     this.statusMessageTimeRemaining > 0 && (this.statusMessageTimeRemaining -= t, this.statusMessageTimeRemaining <= 0 && (this.statusMessageTimeRemaining = 0, this.statusMessage = null));
   }
@@ -245,7 +254,7 @@ class q {
       snake: m(this.snake),
       previousSnake: m(this.previousSnake),
       food: this.food ? { ...this.food } : null,
-      contributions: M(this.contributions),
+      contributions: P(this.contributions),
       score: this.score,
       bestScore: this.bestScore,
       totalCommits: this.totalCommits,
@@ -257,46 +266,64 @@ class q {
     };
   }
 }
-class H {
+class R {
   constructor(t) {
-    this.cells = /* @__PURE__ */ new Map(), this.config = t, this.currentTheme = t.theme, this.root = document.createElement("div"), this.root.className = `gs-container gs-theme-${t.theme}`, this.applyTheme(t.colors), this.root.innerHTML = this.template(), t.target.innerHTML = "", t.target.appendChild(this.root), this.scoreValue = this.requireElement("[data-gs-score]"), this.bestScoreValue = this.requireElement("[data-gs-best-score]"), this.totalCommitsValue = this.requireElement("[data-gs-total-commits]"), this.boardShell = this.requireElement("[data-gs-board-shell]"), this.boardElement = this.requireElement("[data-gs-board]"), this.overlay = this.requireElement("[data-gs-overlay]"), this.overlayTitle = this.requireElement("[data-gs-overlay-title]"), this.overlayText = this.requireElement("[data-gs-overlay-text]"), this.statusBadge = this.requireElement("[data-gs-status]"), this.primaryButton = this.requireElement("[data-gs-start]"), this.restartButton = this.requireElement("[data-gs-restart]"), this.lightThemeButton = this.requireElement("[data-gs-theme-light]"), this.darkThemeButton = this.requireElement("[data-gs-theme-dark]"), this.touchUpButton = this.requireElement("[data-gs-touch-up]"), this.touchLeftButton = this.requireElement("[data-gs-touch-left]"), this.touchDownButton = this.requireElement("[data-gs-touch-down]"), this.touchRightButton = this.requireElement("[data-gs-touch-right]"), this.boardElement.style.setProperty("--gs-cols", String(t.cols)), this.boardElement.style.setProperty("--gs-cell-size", `${t.cellSize}px`), this.boardElement.style.setProperty("--gs-gap-size", `${t.gapSize}px`), this.createCells(), this.updateThemeButtons();
+    this.cells = /* @__PURE__ */ new Map(), this.handleResize = () => {
+      this.updateBoardLayout();
+    }, this.config = t, this.currentTheme = t.theme, this.root = document.createElement("div"), this.root.className = `gs-container gs-theme-${t.theme}`, this.applyTheme(t.colors), this.root.innerHTML = this.template(), t.target.innerHTML = "", t.target.appendChild(this.root), this.scoreValue = this.requireElement("[data-gs-score]"), this.bestScoreValue = this.requireElement("[data-gs-best-score]"), this.totalCommitsValue = this.requireElement("[data-gs-total-commits]"), this.boardShell = this.requireElement("[data-gs-board-shell]"), this.boardFrame = this.requireElement("[data-gs-board-frame]"), this.boardElement = this.requireElement("[data-gs-board]"), this.overlay = this.requireElement("[data-gs-overlay]"), this.overlayTitle = this.requireElement("[data-gs-overlay-title]"), this.overlayText = this.requireElement("[data-gs-overlay-text]"), this.statusBadge = this.requireElement("[data-gs-status]"), this.primaryButton = this.requireElement("[data-gs-start]"), this.restartButton = this.requireElement("[data-gs-restart]"), this.lightThemeButton = this.requireElement("[data-gs-theme-light]"), this.darkThemeButton = this.requireElement("[data-gs-theme-dark]"), this.touchUpButton = this.requireElement("[data-gs-touch-up]"), this.touchLeftButton = this.requireElement("[data-gs-touch-left]"), this.touchDownButton = this.requireElement("[data-gs-touch-down]"), this.touchRightButton = this.requireElement("[data-gs-touch-right]"), this.touchControls = this.requireElement("[data-gs-touch-controls]"), this.boardElement.style.setProperty("--gs-cols", String(t.cols)), this.boardElement.style.setProperty("--gs-cell-size", `${t.cellSize}px`), this.boardElement.style.setProperty("--gs-gap-size", `${t.gapSize}px`), this.createCells(), this.updateThemeButtons(), this.updateBoardLayout(), window.addEventListener("resize", this.handleResize);
   }
   bindControls(t) {
-    this.primaryButton.addEventListener("click", () => {
+    this.bindPress(this.primaryButton, () => {
       if (this.primaryButton.dataset.state === "pause") {
         t.onPause();
         return;
       }
       t.onStart();
-    }), this.restartButton.addEventListener("click", t.onRestart), this.lightThemeButton.addEventListener("click", () => t.onThemeChange("github-light")), this.darkThemeButton.addEventListener("click", () => t.onThemeChange("github-dark")), this.touchUpButton.addEventListener("click", () => t.onDirection({ x: 0, y: -1 })), this.touchLeftButton.addEventListener("click", () => t.onDirection({ x: -1, y: 0 })), this.touchDownButton.addEventListener("click", () => t.onDirection({ x: 0, y: 1 })), this.touchRightButton.addEventListener("click", () => t.onDirection({ x: 1, y: 0 }));
-    let s = 0, i = 0;
-    this.boardShell.addEventListener("touchstart", (a) => {
-      const r = a.changedTouches[0];
-      r && (s = r.clientX, i = r.clientY);
-    }, { passive: !0 }), this.boardShell.addEventListener("touchend", (a) => {
-      const r = a.changedTouches[0];
-      if (!r)
+    }), this.bindPress(this.restartButton, t.onRestart), this.bindPress(this.lightThemeButton, () => t.onThemeChange("github-light")), this.bindPress(this.darkThemeButton, () => t.onThemeChange("github-dark")), this.bindPress(this.touchUpButton, () => t.onDirection({ x: 0, y: -1 })), this.bindPress(this.touchLeftButton, () => t.onDirection({ x: -1, y: 0 })), this.bindPress(this.touchDownButton, () => t.onDirection({ x: 0, y: 1 })), this.bindPress(this.touchRightButton, () => t.onDirection({ x: 1, y: 0 }));
+    let s = 0, a = 0, r = !1;
+    this.boardShell.addEventListener("touchstart", (i) => {
+      const n = i.changedTouches[0];
+      n && (s = n.clientX, a = n.clientY, r = !1);
+    }, { passive: !0 }), this.boardShell.addEventListener("touchmove", (i) => {
+      const n = i.changedTouches[0];
+      if (!n)
         return;
-      const n = r.clientX - s, h = r.clientY - i, l = Math.abs(n), c = Math.abs(h);
-      if (!(Math.max(l, c) < 18)) {
-        if (l > c) {
-          t.onDirection(n > 0 ? { x: 1, y: 0 } : { x: -1, y: 0 });
+      const h = n.clientX - s, l = n.clientY - a, u = Math.abs(h), o = Math.abs(l);
+      if (!(Math.max(u, o) < 14) && (i.preventDefault(), !r)) {
+        if (r = !0, u > o) {
+          t.onDirection(h > 0 ? { x: 1, y: 0 } : { x: -1, y: 0 });
           return;
         }
-        t.onDirection(h > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 });
+        t.onDirection(l > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 });
       }
-    }, { passive: !0 });
+    }, { passive: !1 }), this.boardShell.addEventListener("touchend", (i) => {
+      const n = i.changedTouches[0];
+      if (!n)
+        return;
+      const h = n.clientX - s, l = n.clientY - a, u = Math.abs(h), o = Math.abs(l);
+      if (!r && !(Math.max(u, o) < 18)) {
+        if (u > o) {
+          t.onDirection(h > 0 ? { x: 1, y: 0 } : { x: -1, y: 0 });
+          return;
+        }
+        t.onDirection(l > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 });
+      }
+    }, { passive: !0 }), this.boardShell.addEventListener("touchmove", (i) => {
+      i.preventDefault();
+    }, { passive: !1 }), this.touchControls.addEventListener("touchmove", (i) => {
+      i.preventDefault();
+    }, { passive: !1 });
   }
   render(t) {
     this.scoreValue.textContent = String(t.score), this.bestScoreValue.textContent = String(t.bestScore), this.totalCommitsValue.textContent = String(t.totalCommits), this.statusBadge.textContent = t.statusMessage ?? `Speed Level ${t.difficultyLevel + 1}`, this.statusBadge.classList.toggle("gs-hidden", !t.statusMessage && t.status === "idle");
-    const s = new Map(t.snake.map((a, r) => [`${a.x},${a.y}`, r])), i = t.food ? `${t.food.x},${t.food.y}` : "";
-    for (let a = 0; a < t.rows; a += 1)
-      for (let r = 0; r < t.cols; r += 1) {
-        const n = `${r},${a}`, h = this.cells.get(n);
+    const s = new Map(t.snake.map((r, i) => [`${r.x},${r.y}`, i])), a = t.food ? `${t.food.x},${t.food.y}` : "";
+    for (let r = 0; r < t.rows; r += 1)
+      for (let i = 0; i < t.cols; i += 1) {
+        const n = `${i},${r}`, h = this.cells.get(n);
         if (!h)
           continue;
-        const l = ["gs-cell", `gs-level-${t.contributions[a][r]}`];
-        t.flashKeys.has(n) && l.push("gs-flash"), i === n && l.push("gs-food"), s.has(n) && (l.push("gs-snake"), l.push(s.get(n) === 0 ? "gs-snake-head" : "gs-snake-body")), h.className = l.join(" ");
+        const l = ["gs-cell", `gs-level-${t.contributions[r][i]}`];
+        t.flashKeys.has(n) && l.push("gs-flash"), a === n && l.push("gs-food"), s.has(n) && (l.push("gs-snake"), l.push(s.get(n) === 0 ? "gs-snake-head" : "gs-snake-body")), h.className = l.join(" ");
       }
     this.updateOverlay(t), this.primaryButton.dataset.state = t.status === "running" ? "pause" : "start", this.primaryButton.textContent = t.status === "running" ? "Pause Game" : "Start Game";
   }
@@ -304,7 +331,7 @@ class H {
     this.root.className = `gs-container gs-theme-${s}`, this.currentTheme = s, this.applyTheme(t), this.updateThemeButtons();
   }
   destroy() {
-    this.root.remove();
+    window.removeEventListener("resize", this.handleResize), this.root.remove();
   }
   setHostAppearance(t) {
     t.fontFamily && this.root.style.setProperty("--gs-font-family", t.fontFamily);
@@ -312,21 +339,42 @@ class H {
   createCells() {
     const t = document.createDocumentFragment();
     for (let s = 0; s < this.config.rows; s += 1)
-      for (let i = 0; i < this.config.cols; i += 1) {
-        const a = document.createElement("div"), r = `${i},${s}`;
-        a.className = "gs-cell gs-level-0", a.dataset.position = r, this.cells.set(r, a), t.appendChild(a);
+      for (let a = 0; a < this.config.cols; a += 1) {
+        const r = document.createElement("div"), i = `${a},${s}`;
+        r.className = "gs-cell gs-level-0", r.dataset.position = i, this.cells.set(i, r), t.appendChild(r);
       }
     this.boardElement.appendChild(t);
   }
   updateOverlay(t) {
-    const s = $(t.status, t.totalCommits);
+    const s = _(t.status, t.totalCommits);
     this.overlayTitle.textContent = s.title, this.overlayText.textContent = s.text, this.overlay.classList.toggle("is-hidden", t.status === "running");
+  }
+  updateBoardLayout() {
+    const t = this.config.cols * this.config.cellSize + (this.config.cols - 1) * this.config.gapSize, s = this.config.rows * this.config.cellSize + (this.config.rows - 1) * this.config.gapSize, a = window.matchMedia("(max-width: 720px)").matches;
+    if (this.boardFrame.style.removeProperty("--gs-board-scale"), this.boardFrame.style.removeProperty("--gs-board-width"), this.boardFrame.style.removeProperty("--gs-board-height"), this.boardFrame.style.removeProperty("--gs-board-offset-x"), this.boardFrame.style.removeProperty("--gs-board-offset-y"), this.boardFrame.style.removeProperty("--gs-board-scale"), this.boardShell.style.removeProperty("--gs-board-shell-height"), this.boardShell.classList.remove("is-mobile-fit"), !a)
+      return;
+    const r = this.boardShell.clientWidth, i = this.config.rows === this.config.cols ? r : Math.max(240, Math.min(window.innerHeight * 0.68, 440)), n = r > 0 ? Math.min(r / t, 1) : 1, h = s * n, l = Math.max(0, (i - h) / 2);
+    this.boardShell.classList.add("is-mobile-fit"), this.boardFrame.style.setProperty("--gs-board-scale", String(n)), this.boardFrame.style.setProperty("--gs-board-width", `${t}px`), this.boardFrame.style.setProperty("--gs-board-height", `${s}px`), this.boardFrame.style.setProperty("--gs-board-offset-x", "0px"), this.boardFrame.style.setProperty("--gs-board-offset-y", `${Math.floor(l)}px`), this.boardShell.style.setProperty("--gs-board-shell-height", `${Math.ceil(i)}px`);
+  }
+  bindPress(t, s) {
+    let a = !1;
+    t.addEventListener("pointerdown", (r) => {
+      r.pointerType === "mouse" && r.button !== 0 || (r.preventDefault(), a = !0, s(), window.setTimeout(() => {
+        a = !1;
+      }, 350));
+    }), t.addEventListener("click", (r) => {
+      if (a) {
+        r.preventDefault();
+        return;
+      }
+      s();
+    });
   }
   applyTheme(t) {
     this.root.style.setProperty("--gs-page-bg", t.pageBackground), this.root.style.setProperty("--gs-chart-bg", t.chartBackground), this.root.style.setProperty("--gs-border", t.border), this.root.style.setProperty("--gs-text", t.text), this.root.style.setProperty("--gs-muted", t.mutedText), this.root.style.setProperty("--gs-button-bg", t.buttonBackground), this.root.style.setProperty("--gs-button-hover", t.buttonHover), this.root.style.setProperty("--gs-button-primary", t.buttonPrimary), this.root.style.setProperty("--gs-button-primary-hover", t.buttonPrimaryHover), this.root.style.setProperty("--gs-cell-0", t.cellEmpty), this.root.style.setProperty("--gs-cell-1", t.cellLow), this.root.style.setProperty("--gs-cell-2", t.cellMedium), this.root.style.setProperty("--gs-cell-3", t.cellHigh), this.root.style.setProperty("--gs-cell-4", t.cellHighest), this.root.style.setProperty("--gs-snake", t.snake), this.root.style.setProperty("--gs-snake-tail", t.snakeTail), this.root.style.setProperty("--gs-food", t.food), this.root.style.setProperty("--gs-food-core", t.foodCore), this.root.style.setProperty("--gs-overlay", t.overlayBackground);
   }
   template() {
-    const t = this.config.showMonthLabels ? this.config.months.map((i) => `<span class="gs-month">${i}</span>`).join("") : "", s = this.config.showWeekdayLabels ? this.config.weekdays.map((i) => `<span class="gs-weekday">${i}</span>`).join("") : "";
+    const t = this.config.showMonthLabels ? this.config.months.map((a) => `<span class="gs-month">${a}</span>`).join("") : "", s = this.config.showWeekdayLabels ? this.config.weekdays.map((a) => `<span class="gs-weekday">${a}</span>`).join("") : "";
     return `
       <section class="gs-shell">
         <header class="gs-header">
@@ -369,13 +417,13 @@ class H {
             <div class="gs-months" aria-hidden="${String(!this.config.showMonthLabels)}">${t}</div>
             <div class="gs-weekdays" aria-hidden="${String(!this.config.showWeekdayLabels)}">${s}</div>
             <div class="gs-board-shell" data-gs-board-shell>
-              <div class="gs-board-frame">
+              <div class="gs-board-frame" data-gs-board-frame>
                 <div class="gs-board" data-gs-board></div>
-                <div class="gs-overlay" data-gs-overlay>
-                  <div class="gs-overlay-card">
-                    <h4 data-gs-overlay-title>Press Start</h4>
-                    <p data-gs-overlay-text>Use arrow keys or WASD to steer through the contribution chart.</p>
-                  </div>
+              </div>
+              <div class="gs-overlay" data-gs-overlay>
+                <div class="gs-overlay-card">
+                  <h4 data-gs-overlay-title>Press Start</h4>
+                  <p data-gs-overlay-text>Use arrow keys or WASD to steer through the contribution chart.</p>
                 </div>
               </div>
             </div>
@@ -402,7 +450,7 @@ class H {
             </div>
           </footer>
 
-          <div class="gs-touch-controls" aria-label="Touch controls">
+          <div class="gs-touch-controls" aria-label="Touch controls" data-gs-touch-controls>
             <button class="gs-touch-button gs-touch-up" type="button" data-gs-touch-up aria-label="Move up">↑</button>
             <div class="gs-touch-row">
               <button class="gs-touch-button" type="button" data-gs-touch-left aria-label="Move left">←</button>
@@ -425,7 +473,7 @@ class H {
     this.lightThemeButton.setAttribute("aria-pressed", String(t)), this.darkThemeButton.setAttribute("aria-pressed", String(!t)), this.lightThemeButton.classList.toggle("is-active", t), this.darkThemeButton.classList.toggle("is-active", !t);
   }
 }
-function $(e, t) {
+function _(e, t) {
   switch (e) {
     case "running":
       return {
@@ -450,74 +498,74 @@ function $(e, t) {
   }
 }
 function V(e) {
-  let t = G(e);
+  let t = K(e);
   const s = T({
     ...e,
     theme: t
   });
-  let i = z(s.storageKey);
-  const a = new q({
+  let a = N(s.storageKey);
+  const r = new O({
     rows: s.rows,
     cols: s.cols,
     baseSpeed: s.speed,
-    bestScore: i,
+    bestScore: a,
     difficulty: s.difficulty
-  }), r = new H(s);
-  y(r, s.target);
-  let n = 0, h = a.getSnapshot().status;
-  r.bindControls({
-    onStart: () => a.start(),
-    onPause: () => a.pause(),
-    onRestart: () => a.restart(),
+  }), i = new R(s);
+  b(i, s.target);
+  let n = 0, h = r.getSnapshot().status;
+  i.bindControls({
+    onStart: () => r.start(),
+    onPause: () => r.pause(),
+    onRestart: () => r.restart(),
     onDirection: (o) => {
-      a.getSnapshot().status === "running" && a.setDirection(o);
+      r.getSnapshot().status === "running" && r.setDirection(o);
     },
     onThemeChange: (o) => {
-      t = o, K(r, o), y(r, s.target), k(s.storageKey, o), b(s.target, o);
+      t = o, U(i, o), b(i, s.target), S(s.storageKey, o), y(s.target, o);
     }
   });
-  const l = a.subscribe((o) => {
-    var u, p;
-    r.render(o), o.bestScore !== i && (O(s.storageKey, o.bestScore), i = o.bestScore), o.score !== n && ((u = s.onScoreChange) == null || u.call(s, o.score, o.bestScore, o.totalCommits), n = o.score), h !== "over" && o.status === "over" && ((p = s.onGameOver) == null || p.call(s, o.score, o.totalCommits)), h = o.status;
-  }), c = (o) => {
-    const u = W(o.key);
-    u && a.getSnapshot().status === "running" && (o.preventDefault(), a.setDirection(u));
+  const l = r.subscribe((o) => {
+    var c, f;
+    i.render(o), o.bestScore !== a && (Y(s.storageKey, o.bestScore), a = o.bestScore), o.score !== n && ((c = s.onScoreChange) == null || c.call(s, o.score, o.bestScore, o.totalCommits), n = o.score), h !== "over" && o.status === "over" && ((f = s.onGameOver) == null || f.call(s, o.score, o.totalCommits)), h = o.status;
+  }), u = (o) => {
+    const c = I(o.key);
+    c && r.getSnapshot().status === "running" && (o.preventDefault(), r.setDirection(c));
   };
-  return document.addEventListener("keydown", c), b(s.target, t), s.autoplay && a.start(), {
-    start: () => a.start(),
-    pause: () => a.pause(),
-    restart: () => a.restart(),
+  return document.addEventListener("keydown", u), y(s.target, t), s.autoplay && r.start(), {
+    start: () => r.start(),
+    pause: () => r.pause(),
+    restart: () => r.restart(),
     destroy: () => {
-      l(), document.removeEventListener("keydown", c), a.destroy(), r.destroy();
+      l(), document.removeEventListener("keydown", u), r.destroy(), i.destroy();
     },
-    setTheme: (o, u) => {
-      t = o, r.setTheme(w(o, u), o), y(r, s.target), k(s.storageKey, o), b(s.target, o);
+    setTheme: (o, c) => {
+      t = o, i.setTheme(k(o, c), o), b(i, s.target), S(s.storageKey, o), y(s.target, o);
     },
     setSpeed: (o) => {
-      a.setSpeed(o);
+      r.setSpeed(o);
     }
   };
 }
-function y(e, t) {
-  e.setHostAppearance(I(t));
+function b(e, t) {
+  e.setHostAppearance(W(t));
 }
-function G(e) {
-  var i;
+function K(e) {
+  var a;
   if (e.theme)
     return e.theme;
-  const t = R(e.target);
+  const t = z(e.target);
   if (t)
     return t;
   const s = x(e.storageKey);
   try {
-    const a = window.localStorage.getItem(s);
-    if (a === "github-light" || a === "github-dark")
-      return a;
+    const r = window.localStorage.getItem(s);
+    if (r === "github-light" || r === "github-dark")
+      return r;
   } catch {
   }
-  return (i = window.matchMedia) != null && i.call(window, "(prefers-color-scheme: light)").matches ? "github-light" : "github-dark";
+  return (a = window.matchMedia) != null && a.call(window, "(prefers-color-scheme: light)").matches ? "github-light" : "github-dark";
 }
-function R(e) {
+function z(e) {
   if (typeof window > "u" || typeof document > "u")
     return null;
   const t = typeof e == "string" ? document.querySelector(e) : e, s = [
@@ -526,46 +574,46 @@ function R(e) {
     document.documentElement,
     document.body
   ];
-  for (const a of s) {
-    if (!a)
+  for (const r of s) {
+    if (!r)
       continue;
-    const r = a.getAttribute("data-theme");
-    if (r === "light")
+    const i = r.getAttribute("data-theme");
+    if (i === "light")
       return "github-light";
-    if (r === "dark")
+    if (i === "dark")
       return "github-dark";
-    const n = Array.from(a.classList);
+    const n = Array.from(r.classList);
     if (n.includes("light"))
       return "github-light";
     if (n.includes("dark"))
       return "github-dark";
   }
-  const i = getComputedStyle(document.documentElement).colorScheme;
-  return i.includes("light") ? "github-light" : i.includes("dark") ? "github-dark" : null;
+  const a = getComputedStyle(document.documentElement).colorScheme;
+  return a.includes("light") ? "github-light" : a.includes("dark") ? "github-dark" : null;
 }
 function x(e) {
   return `${e ?? "github-snake-best-score"}-theme`;
 }
-function k(e, t) {
+function S(e, t) {
   try {
     window.localStorage.setItem(x(e), t);
   } catch {
   }
 }
-function K(e, t) {
-  e.setTheme(w(t), t);
+function U(e, t) {
+  e.setTheme(k(t), t);
 }
-function I(e) {
+function W(e) {
   const s = getComputedStyle(e).fontFamily || getComputedStyle(document.body).fontFamily;
   return {
-    fontFamily: N(s) ? s : void 0
+    fontFamily: G(s) ? s : void 0
   };
 }
-function N(e) {
+function G(e) {
   const t = e.trim().toLowerCase();
   return !(!t || t === "serif" || t === "sans-serif" || t === "monospace" || t.includes("times new roman"));
 }
-function b(e, t) {
+function y(e, t) {
   e.dispatchEvent(
     new CustomEvent("github-snake:themechange", {
       detail: { theme: t },
@@ -573,7 +621,7 @@ function b(e, t) {
     })
   );
 }
-function W(e) {
+function I(e) {
   return {
     ArrowUp: { x: 0, y: -1 },
     ArrowDown: { x: 0, y: 1 },
@@ -589,14 +637,14 @@ function W(e) {
     D: { x: 1, y: 0 }
   }[e] ?? null;
 }
-function z(e) {
+function N(e) {
   try {
     return Number(window.localStorage.getItem(e) || 0);
   } catch {
     return 0;
   }
 }
-function O(e, t) {
+function Y(e, t) {
   try {
     window.localStorage.setItem(e, String(t));
   } catch {
